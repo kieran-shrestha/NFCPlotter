@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NfcPlotter</string>
+    <string name="action_settings">Settings</string>
+    <string name="thermistor_C">Comm. Thermistor</string>
+    <string name="thermistor_P">Printed Thermistor</string>
+    <string name="thermistor_I">Internal Sensor</string>
+    <string name="thermistor_L">Legacy tag</string>
+</resources>

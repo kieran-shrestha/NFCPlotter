@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gyjmoble="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="PRINTED IC LAB">
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="NFC SENSOR TOOL "/>
+
+    <Button
+        android:layout_marginVertical="10dp"
+        android:id="@+id/B_thermistor_C"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center"
+        android:text="@string/thermistor_C" />
+
+    <Button
+        android:layout_marginVertical="10dp"
+        android:id="@+id/B_thermistor_P"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center"
+        android:text="@string/thermistor_P" />
+
+    <Button
+        android:layout_marginVertical="10dp"
+        android:id="@+id/B_thermistor_I"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center"
+        android:enabled="false"
+        android:text="@string/thermistor_I" />
+
+    <Button
+        android:layout_marginVertical="10dp"
+        android:id="@+id/B_thermistor_L"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center"
+        android:text="@string/thermistor_L" />
+
+</LinearLayout>
