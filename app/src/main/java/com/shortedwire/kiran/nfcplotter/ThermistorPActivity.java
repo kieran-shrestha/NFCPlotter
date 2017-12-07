@@ -130,11 +130,11 @@ public class ThermistorPActivity extends AppCompatActivity {
           //  int C = (int) (-0.01328 * tempConv + 1152.00357) / 10;    //for 100k
              int C = (int) (-0.01328*tempConv+527.85825)/10; // for 40k
 
-            temperatureParsed[y] = C;
-//            Log.i("INFO"," temp "+y+ ' ' +C);
+            temperatureParsed[y] = C+4;
+          //  Log.i("INFO"," temp "+y+ ' ' +C);
 
             sb.append(' ');
-            sb.append(C);
+            sb.append(C+4);
             sb.append(".00");
             sb.append(dateTime[y]);//new line is added from date and time
         //    sb.append(dateTimeActivity.getDateTime());//new line is added from date and time
