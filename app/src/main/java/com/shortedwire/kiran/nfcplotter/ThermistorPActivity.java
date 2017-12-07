@@ -112,7 +112,7 @@ public class ThermistorPActivity extends AppCompatActivity {
         StringBuilder sb = new StringBuilder();
 
         String[] dateTime = dateTimeActivity.getDateTime(numberOfData,intervalLog);
-//
+
 //        Log.i("INFO","interval is "+intervalLog);
 //        Log.i("INFO","Payload length "+payload.length);
 //        Log.i("INFO","number of data "+ numberOfData);
@@ -121,27 +121,32 @@ public class ThermistorPActivity extends AppCompatActivity {
 
         sb.append(header);
         for (int x = 19, y = 0; y < numberOfData; x += 3, y++) {
-            temperatureParsed[y] = Integer.parseInt(text.substring(x, x + 3));
-//            Log.i("INFO",y+"value" +text.substring(x,x+3));
+            temperatureParsed[y] = text.charAt(x+1);
+            temperatureParsed[y] <<= 8;
+            temperatureParsed[y] |= text.charAt(x);
+
+            double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
+//            Log.i("INFO","analog voltage "+ analogVolt);
             //************************************************************************
             //************************Bijen's sensor code*****************************
             //************************************************************************/
             double tempConv = temperatureParsed[y] * 1000 / 2.700;
-          //  int C = (int) (-0.01328 * tempConv + 1152.00357) / 10;    //for 100k
-             int C = (int) (-0.01328*tempConv+527.85825)/10; // for 40k
+          // double C = (int) (-0.01328 * tempConv + 1152.00357) / 10;    //for 100k
+            double C = (-0.01328*tempConv+527.85825)/10; // for 40k
 
-            temperatureParsed[y] = C+4;
-          //  Log.i("INFO"," temp "+y+ ' ' +C);
+            temperatureParsed[y] = (int) C;
+
+            //  Log.i("INFO"," analog "+y+ ' ' +analogVolt);
+            Log.i("INFO"," temp "+y+ ' ' +C);
 
             sb.append(' ');
-            sb.append(C+4);
-            sb.append(".00");
+            sb.append(temperatureParsed[y]/100);
+            sb.append(".");
+            sb.append(temperatureParsed[y]%100);
             sb.append(dateTime[y]);//new line is added from date and time
-        //    sb.append(dateTimeActivity.getDateTime());//new line is added from date and time
         }
 
         text = sb.toString();
-
 
         drawGraph(temperatureParsed, numberOfData);
         TextView layout = findViewById(R.id.tv_activity_thermistorp);
@@ -166,7 +171,7 @@ public class ThermistorPActivity extends AppCompatActivity {
         LinearLayout heightLayout = (LinearLayout) findViewById(R.id.layout_thermistorpparent);
         int headerLayoutParentHeight = heightLayout.getHeight();
 
-        Log.i("INFO", "y" + headerLayoutParentHeight);
+//        Log.i("INFO", "y" + headerLayoutParentHeight);
 
         int bmpy = (headerLayoutParentHeight) / 2;
 
@@ -181,12 +186,12 @@ public class ThermistorPActivity extends AppCompatActivity {
         float prevstartx=0,prevstarty=0;
 
         for (int i = 0; i < numberOfData; i++) {
-            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * 10, radius, paint);
+            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] / 10, radius, paint);
             if( i > 0){
-                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] * 10),paint);
+                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] / 10),paint);
             }
             prevstartx = 50 + bmpxgap * i;
-            prevstarty = (bmpy - 50) - yData[i] * 10;
+            prevstarty = (bmpy - 50) - yData[i] / 10;
         }
         ImageView imageview = (ImageView) findViewById(R.id.iv_activity_thermistorp);
         imageview.setImageBitmap(bmp);

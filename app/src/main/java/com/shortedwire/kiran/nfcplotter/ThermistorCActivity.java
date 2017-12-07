@@ -121,23 +121,32 @@ public class ThermistorCActivity extends AppCompatActivity {
 
         sb.append(header);
         for (int x = 19, y = 0; y < numberOfData; x += 3, y++) {
-            temperatureParsed[y] = Integer.parseInt(text.substring(x, x + 3));
-//            Log.i("INFO",y+"value" +text.substring(x,x+3));
+            temperatureParsed[y] = text.charAt(x+1);
+            temperatureParsed[y] <<= 8;
+            temperatureParsed[y] |= text.charAt(x);
+
+            double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
+         //   Log.i("INFO"," digital "+y+ ' ' +temperatureParsed[y]);
             //************************************************************************/
             //*******************For Commercial thermistor **************************/
-            double tempConv = ((temperatureParsed[y] / 270.0) * 100000);
-            int C = (int) ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15);
-            temperatureParsed[y] = C;
+            double tempConv = ((analogVolt / 270.0) * 100000);
+            //gives result in 100 multiplied
+            double C =  ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15);
+            C *= 100;
+
+            temperatureParsed[y] = (int) C;
+
+          //  Log.i("INFO"," analog "+y+ ' ' +analogVolt);
 //            Log.i("INFO"," temp "+y+ ' ' +C);
 
             sb.append(' ');
-            sb.append(C);
-            sb.append(".00");
+            sb.append(temperatureParsed[y]/100);
+            sb.append(".");
+            sb.append(temperatureParsed[y]%100);
             sb.append(dateTime[y]);//new line is added from date and time
         }
 
         text = sb.toString();
-
 
         drawGraph(temperatureParsed, numberOfData);
         TextView layout = findViewById(R.id.tv_activity_thermistorc);
@@ -177,12 +186,12 @@ public class ThermistorCActivity extends AppCompatActivity {
         float prevstartx=0,prevstarty=0;
 
         for (int i = 0; i < numberOfData; i++) {
-            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * 10, radius, paint);
+            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] / 10, radius, paint);
             if( i > 0){
-                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] * 10),paint);
+                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] / 10),paint);
             }
             prevstartx = 50 + bmpxgap * i;
-            prevstarty = (bmpy - 50) - yData[i] * 10;
+            prevstarty = (bmpy - 50) - yData[i] / 10;
 
         }
         ImageView imageview = (ImageView) findViewById(R.id.iv_activity_thermistorc);
