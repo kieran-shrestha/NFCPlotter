@@ -4,31 +4,24 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 
 /**
- * Created by kiran on 11/27/2017.
+ * Created by kiran on 12/8/2017.
  */
 
-public class ThermistorPActivity extends AppCompatActivity {
+public class NormalTActivity extends AppCompatActivity {
 
     NfcAdapter nfcAdapter;
     PendingIntent pendingIntent;
@@ -36,21 +29,17 @@ public class ThermistorPActivity extends AppCompatActivity {
     IntentFilter writeTagFilters[];
     boolean writeMode;
     Context context;
-    TextView tvthermistorp;
-
-    DateTimeActivity dateTimeActivity = new DateTimeActivity();
+    TextView tvNormal_tag;
 
     IntentFilter[] filters = new IntentFilter[1];
-
-    public static int temperatureParsed[] = new int[100];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thermistorp);
+        setContentView(R.layout.activity_normal_tag);
 
         context = this;
-        tvthermistorp = (TextView) findViewById(R.id.tv_activity_thermistorp);
+        tvNormal_tag = (TextView) findViewById(R.id.tv_activity_normal_tag);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (nfcAdapter == null) {
@@ -105,111 +94,13 @@ public class ThermistorPActivity extends AppCompatActivity {
             Log.e("UnsupportedEncoding", e.toString());
         }
 
-        String header = text.substring(0, 18);   //this is the serial and name
-        int intervalLog = text.charAt(18);
 
-        int numberOfData = (payload.length - 20) / 3 - 1;
-        StringBuilder sb = new StringBuilder();
-
-        String[] dateTime = dateTimeActivity.getDateTime(numberOfData,intervalLog);
-//
-//        Log.i("INFO","interval is "+intervalLog);
-//        Log.i("INFO","Payload length "+payload.length);
-//        Log.i("INFO","number of data "+ numberOfData);
-//        Log.i("INFO","header "+header);
-//        Log.i("INFO","content "+text);
-
-        sb.append(header);
-        for (int x = 19, y = 0; y < numberOfData; x += 3, y++) {
-            temperatureParsed[y] = Integer.parseInt(text.substring(x, x + 3));
-//            Log.i("INFO",y+"value" +text.substring(x,x+3));
-            //************************************************************************
-            //************************Bijen's sensor code*****************************
-            //************************************************************************/
-            double tempConv = temperatureParsed[y] * 1000 / 2.700;
-          //  int C = (int) (-0.01328 * tempConv + 1152.00357) / 10;    //for 100k
-          //   int C = (int) (-0.01328*tempConv+527.85825)/10; // for 40k
-
-            //VTDA(2) 017.12.08
-            int C = (int) (-(9.7892/10000)*tempConv + 268.19345);
-
-            //crpped first one in my phone the picture
-          //  int C = (int) (-.00885*tempConv + 262.0385);
-
-            temperatureParsed[y] = C+15;
-          //  Log.i("INFO"," temp "+y+ ' ' +C);
-
-            sb.append(' ');
-            sb.append(C+15);
-            sb.append(".00");
-            sb.append(dateTime[y]);//new line is added from date and time
-        //    sb.append(dateTimeActivity.getDateTime());//new line is added from date and time
-        }
-
-        text = sb.toString();
-
-
-        drawGraph(temperatureParsed, numberOfData);
-        TextView layout = findViewById(R.id.tv_activity_thermistorp);
+        TextView layout = findViewById(R.id.tv_activity_normal_tag);
         layout.setVisibility(View.VISIBLE);
-        tvthermistorp.setText(text);
+        tvNormal_tag.setText(text);
     }
 
-    public void drawGraph(int yData[], int numberOfData) {
-        float radius = 5;
 
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(8/*1 /getResources().getDisplayMetrics().density*/);
-        paint.setStyle(Paint.Style.STROKE);
-
-        int x[] = getScreenSIze();
-        int screenWidth = x[0];
-        int screenHeight = x[1];
-
-        int bmpxgap = (screenWidth - 100) / numberOfData;
-
-        LinearLayout heightLayout = (LinearLayout) findViewById(R.id.layout_thermistorpparent);
-        int headerLayoutParentHeight = heightLayout.getHeight();
-
-        Log.i("INFO", "y" + headerLayoutParentHeight);
-
-        int bmpy = (headerLayoutParentHeight) / 2;
-
-        Bitmap bmp = Bitmap.createBitmap(screenWidth, bmpy, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bmp);
-
-        canvas.drawLine(50, bmpy - 50, screenWidth - 50, bmpy - 50, paint);//x axis
-        canvas.drawLine(50, bmpy - 50, 50, 50, paint);
-
-        paint.setColor(Color.BLUE);
-
-        float prevstartx=0,prevstarty=0;
-
-        for (int i = 0; i < numberOfData; i++) {
-            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * 10, radius, paint);
-            if( i > 0){
-                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] * 10),paint);
-            }
-            prevstartx = 50 + bmpxgap * i;
-            prevstarty = (bmpy - 50) - yData[i] * 10;
-        }
-        ImageView imageview = (ImageView) findViewById(R.id.iv_activity_thermistorp);
-        imageview.setImageBitmap(bmp);
-        imageview.setVisibility(View.VISIBLE);
-
-    }
-
-    private int[] getScreenSIze() {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int h = displaymetrics.heightPixels;
-        int w = displaymetrics.widthPixels;
-
-        int[] size = {w, h};
-        return size;
-
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -251,5 +142,3 @@ public class ThermistorPActivity extends AppCompatActivity {
 
 
 }
-
-

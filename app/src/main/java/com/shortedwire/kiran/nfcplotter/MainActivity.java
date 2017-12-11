@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     Button button_thermistor_P;
     Button button_thermistor_I;
     Button button_thermistor_L;
+    Button button_normal_T;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         button_thermistor_P = findViewById(R.id.B_thermistor_P);
         button_thermistor_I = findViewById(R.id.B_thermistor_I);
         button_thermistor_L = findViewById(R.id.B_thermistor_L);
+        button_normal_T = findViewById(R.id.B_normal_tag);
 
         button_thermistor_C.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -52,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        button_normal_T.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),NormalTActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 

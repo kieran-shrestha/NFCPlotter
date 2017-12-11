@@ -6,6 +6,10 @@ import java.util.Locale;
 
 /**
  * Created by kiran on 11/28/2017.
+ *
+ * This activity has no layout. It gives the date and time in the format required by the data structure that we need.
+ * currently the date and time is in reversed format, but I have to make it correct.... It subtracts the interval Log
+ * from the current time and then subtract the time by four minutes for each of the data
  */
 
 public class DateTimeActivity {

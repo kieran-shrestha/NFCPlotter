@@ -39,6 +39,7 @@
         <activity android:name=".ThermistorIActivity"/>
         <activity android:name=".ThermistorLActivity"/>
         <activity android:name=".ThermistorPActivity"/>
+        <activity android:name=".NormalTActivity"/>
 
     </application>
 

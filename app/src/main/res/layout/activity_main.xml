@@ -52,4 +52,12 @@
         android:layout_gravity="center"
         android:text="@string/thermistor_L" />
 
+    <Button
+        android:layout_marginVertical="10dp"
+        android:id="@+id/B_normal_tag"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:text="Normal Read" />
+
 </LinearLayout>
