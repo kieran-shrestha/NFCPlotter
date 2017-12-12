@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     Button button_thermistor_I;
     Button button_thermistor_L;
     Button button_normal_T;
+    Button button_Compare;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         button_thermistor_I = findViewById(R.id.B_thermistor_I);
         button_thermistor_L = findViewById(R.id.B_thermistor_L);
         button_normal_T = findViewById(R.id.B_normal_tag);
+        button_Compare = findViewById(R.id.B_Compare);
 
         button_thermistor_C.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -62,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        button_Compare.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),CompareActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

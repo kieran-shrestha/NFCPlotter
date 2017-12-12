@@ -60,4 +60,12 @@
         android:layout_gravity="center"
         android:text="Normal Read" />
 
+    <Button
+        android:layout_marginVertical="10dp"
+        android:id="@+id/B_Compare"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:text="Printed VS Comm. thermistor" />
+
 </LinearLayout>
