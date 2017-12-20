@@ -131,10 +131,10 @@ public class ThermistorPActivity extends AppCompatActivity {
           //   int C = (int) (-0.01328*tempConv+527.85825)/10; // for 40k
 
             //VTDA(2) 017.12.08
-            int C = (int) (-(9.7892/10000)*tempConv + 268.19345);
+           // int C = (int) (-(9.7892/10000)*tempConv + 268.19345);
 
             //crpped first one in my phone the picture
-          //  int C = (int) (-.00885*tempConv + 262.0385);
+            int C = (int) (-.00885*tempConv + 262.0385);
 
             temperatureParsed[y] = C+15;
           //  Log.i("INFO"," temp "+y+ ' ' +C);
@@ -182,6 +182,13 @@ public class ThermistorPActivity extends AppCompatActivity {
         canvas.drawLine(50, bmpy - 50, screenWidth - 50, bmpy - 50, paint);//x axis
         canvas.drawLine(50, bmpy - 50, 50, 50, paint);
 
+        paint.setStrokeWidth(1f);
+        for(int i = 1 ;i<= 10;i++) {
+
+            canvas.drawLine(50, i*(bmpy - 50) / 10, screenWidth - 50, i*(bmpy - 50) / 10, paint);
+            canvas.drawLine(i*(screenWidth-50)/10+50,bmpy-50,i*(screenWidth-50)/10+50,50,paint);
+        }
+        paint.setStrokeWidth(8);
         paint.setColor(Color.BLUE);
 
         float prevstartx=0,prevstarty=0;

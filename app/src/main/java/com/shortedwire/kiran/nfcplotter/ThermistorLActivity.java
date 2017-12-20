@@ -123,8 +123,35 @@ public class ThermistorLActivity extends AppCompatActivity {
         tvthermistorl.setText(text);
     }
 
+    public int getMin(int yData[]){
+        int Min = yData[0];
+        for(int i = 1; i<yData.length;i++){
+            if(yData[i]<Min){
+                Min = yData[i];
+            }
+        }
+
+        return Min;
+    }
+
+    public int getMax(int yData[]){
+        int Max = yData[0];
+        for(int i = 1; i<yData.length;i++){
+            if(yData[i]>Max) {
+                Max = yData[i];
+            }
+        }
+        return Max;
+    }
+
     public void drawGraph(int yData[], int numberOfData) {
         float radius = 5;
+
+        int Min = getMin(yData);
+        int Max = getMax(yData);
+
+        Log.i("INFO","minimum "+ Min);
+        Log.i("INFO","maximum "+ Max);
 
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);
@@ -150,8 +177,57 @@ public class ThermistorLActivity extends AppCompatActivity {
         canvas.drawLine(50,bmpy-50, screenWidth-50,bmpy-50, paint);//x axis
         canvas.drawLine(50, bmpy-50, 50, 50, paint);
 
+
+        paint.setStrokeWidth(1f);
+        paint.setTextSize(30);
+
+        canvas.drawText(Integer.toString(Min),10,(bmpy - 50)-Min*10,paint);
+        canvas.drawText(Integer.toString(Max),10,(bmpy - 50)-Max*10,paint);
+
+        int center = (Min+Max)/2;
+        int gapY = Max-center;
+        int j = 0;
+
+        while((bmpy-50)-(Max+gapY*j)*10 > 50 ){
+            canvas.drawText(Integer.toString(Max+gapY*j),10,(bmpy-50)-(Max+gapY*j)*10 ,paint);
+
+            paint.setStrokeWidth(2f);
+            paint.setColor(Color.BLACK);
+            paint.setAlpha(100);
+            canvas.drawLine(50, (bmpy-50)-(Max+gapY*j)*10, screenWidth - 50, (bmpy-50)-(Max+gapY*j)*10, paint);
+
+            paint.setAlpha(255);
+            paint.setStrokeWidth(1f);
+            paint.setTextSize(30);
+            j++;
+        }
+
+        canvas.drawText(Integer.toString(center),10,(bmpy - 50)-center*10,paint);
+
+//  drawing the min max lines
+        paint.setStrokeWidth(2f);
+        paint.setColor(Color.RED);
+        canvas.drawLine(50, (bmpy - 50)-Min*10, screenWidth - 50, (bmpy - 50)-Min*10, paint);
+        canvas.drawLine(50, (bmpy - 50)-Max*10, screenWidth - 50, (bmpy - 50)-Max*10, paint);
+        canvas.drawLine(50, (bmpy - 50)-center*10, screenWidth - 50, (bmpy - 50)-center*10, paint);
+
+        paint.setStrokeWidth(1f);
+        paint.setColor(Color.BLACK);
+        paint.setAlpha(50);
+
+        for(int i = 1 ;i<= 10;i++) {
+
+            paint.setAlpha(20);
+            canvas.drawLine(50, i*(bmpy - 50) / 10, screenWidth - 50, i*(bmpy - 50) / 10, paint);   //horizontal
+            paint.setAlpha(100);
+            canvas.drawLine(i*(screenWidth-50)/10+50,bmpy-50,i*(screenWidth-50)/10+50,50,paint);
+        }
+
+        paint.setStrokeWidth(8);
+        paint.setAlpha(255);
         paint.setColor(Color.BLUE);
         float prevstartx=0,prevstarty=0;
+
 //        Log.i("INFO","xgap"+bmpxgap+"number"+numberOfData+"width"+screenWidth);
 
         for (int i = 0; i < numberOfData; i++) {
