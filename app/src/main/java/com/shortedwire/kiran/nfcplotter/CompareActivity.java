@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,8 +38,10 @@ public class CompareActivity extends AppCompatActivity {
     boolean writeMode;
     Context context;
     TextView tvCompare;
+    SeekBar seekbar;
 
     IntentFilter[] filters = new IntentFilter[1];
+    int numberofData;
 
     public static int temperatureParsed0[] = new int[500];
     public static int temperatureParsed1[] = new int[500];
@@ -48,10 +51,28 @@ public class CompareActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compare);
 
-
         context = this;
         tvCompare = (TextView) findViewById(R.id.tv_activity_Compare);
+        seekbar = (SeekBar) findViewById(R.id.sb_activity_thermistor_compare);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                drawGraph(temperatureParsed0,numberofData,temperatureParsed1,progress);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         if (nfcAdapter == null) {
             // Stop here, we definitely need NFC
@@ -105,12 +126,13 @@ public class CompareActivity extends AppCompatActivity {
             Log.e("UnsupportedEncoding", e.toString());
         }
 
-        int y, z = payload.length / 31;
+        int y;
+        numberofData = payload.length / 31;
         int a, b;
 
         // Log.i("INFO","payload "+z);
 
-        for (int x = 0; x < z; x++) {
+        for (int x = 0; x < numberofData; x++) {
             y = x * 31;
             a = Integer.parseInt(text.substring(y + 1, y + 2));
             // Log.i("INFO", "A" + a);
@@ -123,7 +145,7 @@ public class CompareActivity extends AppCompatActivity {
 
         }
 
-        drawGraph(temperatureParsed0, z, temperatureParsed1);
+        drawGraph(temperatureParsed0, numberofData, temperatureParsed1,0);
         // drawGraph(temperatureParsed1, z, 1);
 
         TextView layout = findViewById(R.id.tv_activity_Compare);
@@ -131,8 +153,33 @@ public class CompareActivity extends AppCompatActivity {
         tvCompare.setText(text);
     }
 
-    public void drawGraph(int yData[], int numberOfData, int y2Data[]) {//color is only 1 and 2
+    public int getMin(int yData[]){
+        int Min = yData[0];
+        for(int i = 1; i<yData.length;i++){
+            if(yData[i]<Min){
+                Min = yData[i];
+            }
+        }
+
+        return Min;
+    }
+
+    public int getMax(int yData[]){
+        int Max = yData[0];
+        for(int i = 1; i<yData.length;i++){
+            if(yData[i]>Max) {
+                Max = yData[i];
+            }
+        }
+        return Max;
+    }
+
+
+    public void drawGraph(int yData[], int numberOfData, int y2Data[],int factors) {//color is only 1 and 2
         float radius = 5;
+
+        int Min = getMin(yData);
+        int Max = getMax(yData);
 
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);
@@ -155,28 +202,119 @@ public class CompareActivity extends AppCompatActivity {
         Bitmap bmp = Bitmap.createBitmap(screenWidth, bmpy, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
 
-        canvas.drawLine(50, bmpy - 50, screenWidth - 50, bmpy - 50, paint);//x axis
-        canvas.drawLine(50, bmpy - 50, 50, 50, paint);
+        int factor = 10;
+        switch (factors){
+            case 0 : factor = 10;
+                break;
+            case 1 : factor = 20;
+                break;
+            case 2 : factor = 25;
+                break;
+
+        }
+///////this is axis/////////////////
+        canvas.drawLine(50,bmpy-50, screenWidth-50,bmpy-50, paint);//x axis
+        canvas.drawLine(50, bmpy-50, 50, 50, paint);
 
         paint.setStrokeWidth(1f);
+        paint.setTextSize(30);
+/////////////////////this si the max and min text/////////////////////////////
+        canvas.drawText(Integer.toString(Min),10,(bmpy - 50)-Min*factor,paint);
+        canvas.drawText(Integer.toString(Max),10,(bmpy - 50)-Max*factor,paint);
+
+        int center = (Min+Max)/2;
+        int gapY = (Max-center)/2;
+        int j = 0;
+
+        canvas.drawText(Integer.toString(center+gapY),10,(bmpy - 50)-(center+gapY)*factor,paint);
+        canvas.drawText(Integer.toString(center-gapY),10,(bmpy - 50)-(center-gapY)*factor,paint);
+
+/////////////draws lines according to the max - center gap and repeat///////////////
+        //////////makes the horizontal dark lines////////////////////////////////
+        //starts to write only after max data
+        while((bmpy-50)-(Max+gapY*j)*factor > 50 ){
+            canvas.drawText(Integer.toString(Max+gapY*j),10,(bmpy-50)-(Max+gapY*j)*factor ,paint);
+
+            paint.setStrokeWidth(2f);
+            paint.setColor(Color.BLACK);
+            paint.setAlpha(75);
+            canvas.drawLine(50, (bmpy-50)-(Max+gapY*j)*factor, screenWidth - 50, (bmpy-50)-(Max+gapY*j)*factor, paint);
+
+            paint.setAlpha(255);
+            paint.setStrokeWidth(1f);
+            paint.setTextSize(30);
+
+            j++;
+        }
+
+
+        //////make horizontal lines below min
+        j = 0;
+        while( (bmpy - 50) - (Min- ((center-Min)/2)*j) * factor < bmpy - 50){
+            canvas.drawText(Integer.toString(Min- ((center-Min)/2)*j),10,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor ,paint);
+
+            paint.setStrokeWidth(2f);
+            paint.setColor(Color.BLACK);
+            paint.setAlpha(75);
+            canvas.drawLine(50,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor , screenWidth - 50,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor , paint);
+            j++;
+            paint.setAlpha(255);
+            paint.setStrokeWidth(1f);
+            paint.setTextSize(30);
+        }
+
+//////////writes the center text///////////////////////////////////
+        canvas.drawText(Integer.toString(center),10,(bmpy - 50)-center*factor,paint);
+
+//  drawing the min max  center lines
+        paint.setStrokeWidth(4f);
+        paint.setColor(Color.RED);
+        canvas.drawLine(50, (bmpy - 50)-Min*factor, screenWidth - 50, (bmpy - 50)-Min*factor, paint);
+        canvas.drawLine(50, (bmpy - 50)-Max*factor, screenWidth - 50, (bmpy - 50)-Max*factor, paint);
+        canvas.drawLine(50, (bmpy - 50)-center*factor, screenWidth - 50, (bmpy - 50)-center*factor, paint);
+
+        canvas.drawLine(50, (bmpy - 50)-(center+gapY)*factor, screenWidth - 50, (bmpy - 50)-(center+gapY)*factor, paint);
+        canvas.drawLine(50, (bmpy - 50)-(center-gapY)*factor, screenWidth - 50, (bmpy - 50)-(center-gapY)*factor, paint);
+
+        paint.setStrokeWidth(1f);
+        paint.setColor(Color.BLACK);
+        paint.setAlpha(50);
+/////////makes grid constant
         for(int i = 1 ;i<= 10;i++) {
 
-            canvas.drawLine(50, i*(bmpy - 50) / 10, screenWidth - 50, i*(bmpy - 50) / 10, paint);
+            paint.setAlpha(20);
+            canvas.drawLine(50, i*(bmpy - 50) / 10, screenWidth - 50, i*(bmpy - 50) / 10, paint);   //horizontal
             canvas.drawLine(i*(screenWidth-50)/10+50,bmpy-50,i*(screenWidth-50)/10+50,50,paint);
         }
+
         paint.setStrokeWidth(8);
+        paint.setAlpha(255);
         paint.setColor(Color.BLUE);
 
-        float prevstartx = 0, prevstarty = 0;
-//        Log.i("INFO","xgap"+bmpxgap+"number"+numberOfData+"width"+screenWidth);
+        float prevstartx=0,prevstarty=0;
 
         for (int i = 0; i < numberOfData; i++) {
-            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * 10, radius, paint);
-            if (i > 0) {
-                canvas.drawLine(prevstartx, prevstarty, (float) (50 + bmpxgap * i), (float) ((bmpy - 50) - yData[i] * 10), paint);
+            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * factor, radius, paint);
+            if(i%20 == 0){  //on every 10 data draw vertical line
+                paint.setAlpha(255);
+                paint.setStrokeWidth(1f);
+                paint.setTextSize(20);
+
+                canvas.drawText(Integer.toString(i),40+bmpxgap*i,(bmpy - 10)  ,paint);
+
+                paint.setStrokeWidth(2f);
+                paint.setColor(Color.BLACK);
+                paint.setAlpha(100);
+                canvas.drawLine(50 + bmpxgap * i, bmpy-50, 50 + bmpxgap * i, 50, paint);
+                paint.setStrokeWidth(3);
+                paint.setAlpha(255);
+                paint.setColor(Color.BLUE);
+            }
+            if( i > 0){
+                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] * factor),paint);
             }
             prevstartx = 50 + bmpxgap * i;
-            prevstarty = (bmpy - 50) - yData[i] * 10;
+            prevstarty = (bmpy - 50) - yData[i] * factor;
         }
 
         paint.setColor(Color.RED);
@@ -184,17 +322,19 @@ public class CompareActivity extends AppCompatActivity {
         prevstarty = 0;
 
         for (int i = 0; i < numberOfData; i++) {
-            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - y2Data[i] * 10, radius, paint);
+            canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - y2Data[i] * factor, radius, paint);
             if (i > 0) {
-                canvas.drawLine(prevstartx, prevstarty, (float) (50 + bmpxgap * i), (float) ((bmpy - 50) - y2Data[i] * 10), paint);
+                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - y2Data[i] * factor),paint);
             }
             prevstartx = 50 + bmpxgap * i;
-            prevstarty = (bmpy - 50) - y2Data[i] * 10;
+            prevstarty = (bmpy - 50) - y2Data[i] * factor;
         }
 
         ImageView imageview = (ImageView) findViewById(R.id.iv_activity_Compare);
         imageview.setImageBitmap(bmp);
         imageview.setVisibility(View.VISIBLE);
+
+        seekbar.setVisibility(View.VISIBLE);
 
     }
 
