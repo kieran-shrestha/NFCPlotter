@@ -23,6 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.util.Formatter;
+
+import static java.lang.Integer.parseInt;
+import static java.lang.Integer.toUnsignedString;
+
+
 
 /**
  * Created by kiran on 11/27/2017.
@@ -100,7 +109,7 @@ public class ThermistorCActivity extends AppCompatActivity {
         // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
         try {
             // Get the Text
-            text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
+            text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1,"ISO-8859-1" );//*/ textEncoding);
         } catch (UnsupportedEncodingException e) {
             Log.e("UnsupportedEncoding", e.toString());
         }
@@ -113,17 +122,19 @@ public class ThermistorCActivity extends AppCompatActivity {
 
         String[] dateTime = dateTimeActivity.getDateTime(numberOfData,intervalLog);
 
-//        Log.i("INFO","interval is "+intervalLog);
-//        Log.i("INFO","Payload length "+payload.length);
-//        Log.i("INFO","number of data "+ numberOfData);
-//        Log.i("INFO","header "+header);
-//        Log.i("INFO","content "+text);
-
         sb.append(header);
+        String hexText = convertStringToHex(text);
+
+        Log.i("hex","hex string" + hexText);
+
         for (int x = 19, y = 0; y < numberOfData; x += 3, y++) {
             temperatureParsed[y] = text.charAt(x+1);
             temperatureParsed[y] <<= 8;
             temperatureParsed[y] |= text.charAt(x);
+
+            Log.i("hex","hex0 "+ (long)text.charAt(x));
+            Log.i("hex","hex0 "+ (int)text.charAt(x+1));
+            Log.i("hex","hex0 "+ (int)text.charAt(x+2));
 
             double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
          //   Log.i("INFO"," digital "+y+ ' ' +temperatureParsed[y]);
@@ -136,8 +147,8 @@ public class ThermistorCActivity extends AppCompatActivity {
 
             temperatureParsed[y] = (int) C;
 
-          //  Log.i("INFO"," analog "+y+ ' ' +analogVolt);
-//            Log.i("INFO"," temp "+y+ ' ' +C);
+           // Log.i("INFO"," analog "+y+ ' ' +analogVolt);
+            //Log.i("INFO"," temp "+y+ ' ' +C);
 
             sb.append(' ');
             sb.append(temperatureParsed[y]/100);
@@ -152,6 +163,15 @@ public class ThermistorCActivity extends AppCompatActivity {
         TextView layout = findViewById(R.id.tv_activity_thermistorc);
         layout.setVisibility(View.VISIBLE);
         tvthermistorc.setText(text);
+    }
+
+
+    private String convertStringToHex(String string)  {
+        StringBuilder newString = new StringBuilder();
+        for (int i=0; i<string.length(); i++) {
+            newString.append(String.format("%x ", (byte)(string.charAt(i))));
+        }
+        return newString.toString();
     }
 
     public void drawGraph(int yData[], int numberOfData) {
