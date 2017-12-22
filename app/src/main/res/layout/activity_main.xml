@@ -20,7 +20,7 @@
         android:text="NFC SENSOR TOOL "/>
 
     <Button
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_C"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
@@ -28,7 +28,7 @@
         android:text="@string/thermistor_C" />
 
     <Button
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_P"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
@@ -36,7 +36,7 @@
         android:text="@string/thermistor_P" />
 
     <Button
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_I"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
@@ -45,7 +45,7 @@
         android:text="@string/thermistor_I" />
 
     <Button
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_L"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
@@ -53,7 +53,7 @@
         android:text="@string/thermistor_L" />
 
     <Button
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="2dp"
         android:id="@+id/B_normal_tag"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -61,11 +61,21 @@
         android:text="Normal Read" />
 
     <Button
-        android:layout_marginVertical="10dp"
+        android:layout_marginVertical="2dp"
         android:id="@+id/B_Compare"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_gravity="center"
         android:text="Printed VS Comm. thermistor" />
+
+    <Button
+        android:layout_marginVertical="2dp"
+        android:id="@+id/B_hexDecode"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:text="FIRMWARE V2.0" />
+
+
 
 </LinearLayout>
