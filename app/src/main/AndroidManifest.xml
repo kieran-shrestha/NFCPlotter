@@ -42,7 +42,7 @@
         <activity android:name=".NormalTActivity"/>
         <activity android:name=".CompareActivity"/>
         <activity android:name=".FirmwareIITActivity"/>
-        <activity android:name=".ListLegacy"/>
+        <activity android:name=".ListFiles"/>
 
     </application>
 

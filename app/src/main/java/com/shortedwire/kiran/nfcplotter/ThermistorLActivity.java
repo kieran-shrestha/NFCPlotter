@@ -55,8 +55,8 @@ public class ThermistorLActivity extends AppCompatActivity {
     int recovery = 0;
 
     IntentFilter[] filters = new IntentFilter[1];
-    int z;
-   // int payloadLength;
+    int numberofData;
+
 
     public static int temperatureParsed[] = new int[500];
 
@@ -74,7 +74,7 @@ public class ThermistorLActivity extends AppCompatActivity {
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                drawGraph(temperatureParsed, z, progress);
+                drawGraph(temperatureParsed, numberofData, progress);
             }
 
             @Override
@@ -145,7 +145,6 @@ public class ThermistorLActivity extends AppCompatActivity {
                     msgs[i] = (NdefMessage) rawMsgs[i];
                 }
             }
-          //  payloadLength = buildTagViews.getPayloadLength(msgs);
             showSaveData(buildTagViews.nDefPayload(msgs),1);
 
         }
@@ -176,11 +175,10 @@ public class ThermistorLActivity extends AppCompatActivity {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         int y;
-        z = text.length() / 24;//num of logs
-        Log.d("FILE","legngth is "+z);
+        numberofData = text.length() / 24;//num of logs
         int a, b;
 
-        for (int x = 0; x < z; x++) {
+        for (int x = 0; x < numberofData; x++) {
             y = x * 24;
             a = Integer.parseInt(text.substring(y + 1, y + 2));
             // Log.i("INFO", "A" + a);
@@ -189,7 +187,7 @@ public class ThermistorLActivity extends AppCompatActivity {
             temperatureParsed[x] = a * 10 + b;
         }
 
-        drawGraph(temperatureParsed, z, 0);
+        drawGraph(temperatureParsed, numberofData, 0);
 
         TextView layout = findViewById(R.id.tv_activity_thermistorl);
         layout.setVisibility(View.VISIBLE);

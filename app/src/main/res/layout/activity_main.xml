@@ -12,9 +12,9 @@
         android:id="@+id/text0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_gravity="center"
-        android:layout_toLeftOf="@id/text1"
+        android:layout_toStartOf="@id/text1"
         android:text="PRINTED IC LAB">
 
     </TextView>
@@ -23,47 +23,98 @@
         android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_gravity="center"
         android:text="NFC SENSOR TOOL " />
 
-    <Button
-        android:id="@+id/B_thermistor_C"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/ll_commercial_load"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/text0"
-        android:layout_gravity="center"
-        android:layout_marginVertical="2dp"
-        android:backgroundTint="#05F"
-        android:text="@string/thermistor_C" />
+        android:layout_below="@id/text1"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-    <Button
-        android:id="@+id/B_thermistor_P"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/B_thermistor_C"
-        android:layout_gravity="center"
-        android:layout_marginVertical="2dp"
-        android:backgroundTint="#05F"
-        android:text="@string/thermistor_P" />
+        <Button
+            android:id="@+id/B_thermistor_C"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:backgroundTint="#05F"
+            android:text="@string/thermistor_C" />
 
-    <Button
-        android:id="@+id/B_thermistor_I"
-        android:layout_width="fill_parent"
+
+        <Button
+            android:id="@+id/B_load_commercial"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="#05F"
+            android:text="Load" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_printed_load"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/B_thermistor_P"
-        android:layout_gravity="center"
-        android:layout_marginVertical="2dp"
-        android:backgroundTint="#05F"
-        android:enabled="false"
-        android:text="@string/thermistor_I" />
+        android:layout_below="@id/ll_commercial_load"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/B_thermistor_P"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:backgroundTint="#05F"
+            android:text="@string/thermistor_P" />
+
+        <Button
+            android:id="@+id/B_load_printed"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="#05F"
+            android:text="Load" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_pVSc_load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_printed_load"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/B_Compare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:backgroundTint="#05F"
+            android:text="P VS Comm. Therm." />
+
+        <Button
+            android:id="@+id/B_load_pVSc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="#05F"
+            android:text="Load" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_legacy_load"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ll_pVSc_load"
         android:orientation="horizontal"
-        android:layout_below="@id/B_thermistor_I"
         android:weightSum="2">
 
         <Button
@@ -71,16 +122,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:backgroundTint="#05F"
             android:layout_weight="1"
+            android:backgroundTint="#05F"
             android:text="@string/thermistor_L" />
 
         <Button
             android:id="@+id/B_loadLegacy"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:backgroundTint="#05F"
             android:layout_weight="1"
+            android:backgroundTint="#05F"
             android:text="Load" />
 
     </LinearLayout>
@@ -91,28 +142,25 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_legacy_load"
         android:layout_gravity="center"
-        android:layout_marginVertical="2dp"
         android:backgroundTint="#05F"
         android:text="Normal Read" />
 
     <Button
-        android:id="@+id/B_Compare"
-        android:layout_width="match_parent"
+        android:id="@+id/B_thermistor_I"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/B_normal_tag"
         android:layout_gravity="center"
-        android:layout_marginVertical="2dp"
         android:backgroundTint="#05F"
-        android:text="Printed VS Comm. thermistor" />
+        android:enabled="false"
+        android:text="@string/thermistor_I" />
 
     <Button
         android:id="@+id/B_hexDecode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/B_Compare"
+        android:layout_below="@id/B_thermistor_I"
         android:layout_gravity="center"
-        android:layout_marginVertical="2dp"
         android:backgroundTint="#05F"
         android:text="FIRMWARE V2.0" />
-
 </RelativeLayout>

@@ -17,12 +17,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -41,6 +45,10 @@ public class ThermistorCActivity extends AppCompatActivity {
     SeekBar seekbar;
 
     DateTimeActivity dateTimeActivity = new DateTimeActivity();
+    BuildTagViews buildTagViews = new BuildTagViews();
+
+    String dataRecovered;
+    int recovery = 0;
 
     IntentFilter[] filters = new IntentFilter[1];
     int numberofData;
@@ -71,6 +79,30 @@ public class ThermistorCActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        if(savedInstanceState == null){
+            Bundle extras = getIntent().getExtras();
+            if(extras == null){
+
+            }else{
+                dataRecovered = extras.getString("dataRecover");
+                recovery = 1;
+            }
+        }
+
+
+        final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_thermistorcparent);
+        ViewTreeObserver viewTreeObserver = layout.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if(recovery == 1){
+                    recovery = 0;
+                    showSaveData(dataRecovered,0);
+                }
             }
         });
 
@@ -107,29 +139,38 @@ public class ThermistorCActivity extends AppCompatActivity {
                     msgs[i] = (NdefMessage) rawMsgs[i];
                 }
             }
-            buildTagViews(msgs);
+            showSaveData(buildTagViews.nDefPayload(msgs),1);
         }
     }
 
-    private void buildTagViews(NdefMessage[] msgs) {
-        if (msgs == null || msgs.length == 0) return;
+    private void showSaveData(String text, int writeFile) {
+//////////creating files based on date and time///////////////////////////
+//////////////////////////////////////////////////////////////////////////
+        if (writeFile == 1) {
+            FileOutputStream fileOutputStream = null;
 
-        String text = "";
-        byte[] payload = msgs[0].getRecords()[0].getPayload();
-        String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16"; // Get the Text Encoding
-        int languageCodeLength = payload[0] & 0063; // Get the Language Code, e.g. "en"
-        // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
-        try {
-            // Get the Text
-            text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncoding);
-        } catch (UnsupportedEncodingException e) {
-            Log.e("UnsupportedEncoding", e.toString());
+            try {
+                fileOutputStream = openFileOutput("Legacy" + dateTimeActivity.getDateTimeFileName() + ".com", Context.MODE_PRIVATE);
+                fileOutputStream.write(text.getBytes());
+                Toast.makeText(this, "Saved !!", Toast.LENGTH_SHORT).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         String header = text.substring(0, 18);   //this is the serial and name
         int intervalLog = text.charAt(18);
 
-        numberofData = (payload.length - 20) / 3 - 1;
+        numberofData = (text.length() - 20) / 3 - 1;
         StringBuilder sb = new StringBuilder();
 
         String[] dateTime = dateTimeActivity.getDateTime(numberofData,intervalLog);

@@ -17,7 +17,10 @@ public class MainActivity extends AppCompatActivity {
     Button button_normal_T;
     Button button_Compare;
     Button button_Version2;
+
     Button button_LoadLegacy;
+    Button button_LoadCompare;
+    Button button_LoadCommercial;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         button_Compare = findViewById(R.id.B_Compare);
         button_Version2 = findViewById(R.id.B_hexDecode);
         button_LoadLegacy = findViewById(R.id.B_loadLegacy);
+        button_LoadCompare = findViewById(R.id.B_load_pVSc);
+        button_LoadCommercial = findViewById(R.id.B_load_commercial);
 
         button_thermistor_C.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -84,7 +89,24 @@ public class MainActivity extends AppCompatActivity {
 
         button_LoadLegacy.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),ListLegacy.class);
+                Intent intent = new Intent(getApplicationContext(),ListFiles.class);
+                intent.putExtra("LoadOption","legacy");
+                startActivity(intent);
+            }
+        });
+
+        button_LoadCompare.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ListFiles.class);
+                intent.putExtra("LoadOption","compare");
+                startActivity(intent);
+            }
+        });
+
+        button_LoadCommercial.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ListFiles.class);
+                intent.putExtra("LoadOption","commercial");
                 startActivity(intent);
             }
         });
