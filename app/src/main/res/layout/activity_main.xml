@@ -4,110 +4,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="5dp"
-    android:paddingLeft="5dp">
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
     <!--android:background="#04F">-->
 
     <TextView
         android:id="@+id/text0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="PRINTED IC LAB"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@id/text1">
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@id/text1"
+        android:text="PRINTED IC LAB">
+
     </TextView>
 
     <TextView
         android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="NFC SENSOR TOOL "
         android:layout_alignParentRight="true"
-        />
+        android:layout_gravity="center"
+        android:text="NFC SENSOR TOOL " />
 
     <Button
-        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_C"
-        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_gravity="center"
-        android:text="@string/thermistor_C"
+        android:layout_height="wrap_content"
         android:layout_below="@id/text0"
+        android:layout_gravity="center"
+        android:layout_marginVertical="2dp"
         android:backgroundTint="#05F"
-        />
+        android:text="@string/thermistor_C" />
 
     <Button
-        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_P"
-        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_gravity="center"
-        android:text="@string/thermistor_P"
+        android:layout_height="wrap_content"
         android:layout_below="@id/B_thermistor_C"
-        android:backgroundTint="#05F"/>
+        android:layout_gravity="center"
+        android:layout_marginVertical="2dp"
+        android:backgroundTint="#05F"
+        android:text="@string/thermistor_P" />
 
     <Button
-        android:layout_marginVertical="2dp"
         android:id="@+id/B_thermistor_I"
-        android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_gravity="center"
-        android:enabled="false"
-        android:text="@string/thermistor_I"
+        android:layout_height="wrap_content"
         android:layout_below="@id/B_thermistor_P"
-        android:backgroundTint="#05F"/>
-
-    <Button
-        android:layout_marginVertical="2dp"
-        android:id="@+id/B_thermistor_L"
-        android:layout_height="wrap_content"
-        android:layout_width="185dp"
         android:layout_gravity="center"
-        android:text="@string/thermistor_L"
+        android:layout_marginVertical="2dp"
+        android:backgroundTint="#05F"
+        android:enabled="false"
+        android:text="@string/thermistor_I" />
+
+    <LinearLayout
+        android:id="@+id/ll_legacy_load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@id/B_thermistor_I"
-        android:backgroundTint="#05F"/>
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/B_thermistor_L"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:backgroundTint="#05F"
+            android:layout_weight="1"
+            android:text="@string/thermistor_L" />
+
+        <Button
+            android:id="@+id/B_loadLegacy"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:backgroundTint="#05F"
+            android:layout_weight="1"
+            android:text="Load" />
+
+    </LinearLayout>
 
     <Button
-        android:layout_marginVertical="2dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/B_loadLegacy"
-        android:text="Load"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/B_thermistor_L"
-        android:layout_below ="@id/B_thermistor_I"
-        android:backgroundTint="#05F"/>
-
-    <Button
-        android:layout_marginVertical="2dp"
         android:id="@+id/B_normal_tag"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_legacy_load"
         android:layout_gravity="center"
-        android:text="Normal Read"
-        android:layout_below = "@id/B_thermistor_L"
-        android:backgroundTint="#05F"/>
+        android:layout_marginVertical="2dp"
+        android:backgroundTint="#05F"
+        android:text="Normal Read" />
 
     <Button
-        android:layout_marginVertical="2dp"
         android:id="@+id/B_Compare"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_gravity="center"
-        android:text="Printed VS Comm. thermistor"
+        android:layout_height="wrap_content"
         android:layout_below="@id/B_normal_tag"
-        android:backgroundTint="#05F"/>
+        android:layout_gravity="center"
+        android:layout_marginVertical="2dp"
+        android:backgroundTint="#05F"
+        android:text="Printed VS Comm. thermistor" />
 
     <Button
-        android:layout_marginVertical="2dp"
         android:id="@+id/B_hexDecode"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_gravity="center"
-        android:text="FIRMWARE V2.0"
+        android:layout_height="wrap_content"
         android:layout_below="@id/B_Compare"
-        android:backgroundTint="#05F"/>
+        android:layout_gravity="center"
+        android:layout_marginVertical="2dp"
+        android:backgroundTint="#05F"
+        android:text="FIRMWARE V2.0" />
 
 </RelativeLayout>

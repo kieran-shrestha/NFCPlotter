@@ -1,6 +1,7 @@
 package com.shortedwire.kiran.nfcplotter;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -45,15 +46,17 @@ public class ListLegacy extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                File selected = new File(fileList.get(position));
-                FileInputStream fileInputStream = null;
-
+               FileInputStream fileInputStream = null;
+               String text;
+///////read out selected file and then write to string buffer////////////////
                 try {
                     fileInputStream = openFileInput(selected.getName());
                     int read = -1;
                     StringBuffer buffer = new StringBuffer();
                     while((read = fileInputStream.read()) != -1 )
                         buffer.append((char) read);
-                    Log.i("FILE",buffer.toString());
+                    text = buffer.toString();
+                    fileChosen(text);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -69,25 +72,10 @@ public class ListLegacy extends AppCompatActivity {
             }
         });
 
-//        FileInputStream fileInputStream = null;
-//        try {
-//            fileInputStream = openFileInput("Legacy.dat");
-//            int read = -1;
-//            StringBuffer buffer = new StringBuffer();
-//            while ((read = fileInputStream.read()) != -1)
-//                buffer.append((char) read);
-//            Log.i("INFO", buffer.toString());
-//            TextView layout = findViewById(R.id.tv_activity_list_legacy);
-//            layout.setVisibility(View.VISIBLE);
-//            textView.setText(buffer);
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
 
         File directoryPath = getFilesDir();
         File[] files = directoryPath.listFiles();//stores all the files
-
+///////////listing required files inthe list////////////////////////////
         for(int i = 0;i<files.length;i++){
             if(files[i].getName().endsWith(".lgc")){
                 fileList.add(files[i].getName());
@@ -99,7 +87,12 @@ public class ListLegacy extends AppCompatActivity {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    }
 
+    private void fileChosen(String texts){
+        Intent intent = new Intent(getApplicationContext(),ThermistorLActivity.class);
+        intent.putExtra("dataRecover",texts);
+        startActivity(intent);
     }
 
 }
