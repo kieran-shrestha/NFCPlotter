@@ -12,6 +12,7 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -23,6 +24,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -40,6 +47,9 @@ public class ThermistorLActivity extends AppCompatActivity {
     TextView tvthermistorl;
     SeekBar seekbar;
 
+    DateTimeActivity dateTimeActivity = new DateTimeActivity();
+
+
     IntentFilter[] filters = new IntentFilter[1];
     int z;
 
@@ -51,7 +61,6 @@ public class ThermistorLActivity extends AppCompatActivity {
         setContentView(R.layout.activity_thermistorl);
 
 
-
         context = this;
         tvthermistorl = (TextView) findViewById(R.id.tv_activity_thermistorl);
         seekbar = (SeekBar) findViewById(R.id.sb_activity_thermistorl);
@@ -60,7 +69,7 @@ public class ThermistorLActivity extends AppCompatActivity {
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                drawGraph(temperatureParsed,z,progress);
+                drawGraph(temperatureParsed, z, progress);
             }
 
             @Override
@@ -125,31 +134,52 @@ public class ThermistorLActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException e) {
             Log.e("UnsupportedEncoding", e.toString());
         }
+//////////creating files based on date and time///////////////////////////
+//////////////////////////////////////////////////////////////////////////
+            FileOutputStream fileOutputStream = null;
 
-        int y ;
-        z = payload.length/24;//num of logs
-        int a,b;
+            try {
+                fileOutputStream = openFileOutput("Legacy" + dateTimeActivity.getDateTimeFileName() + ".lgc", Context.MODE_PRIVATE);
+                fileOutputStream.write(text.getBytes());
+                Toast.makeText(this, "Saved !!", Toast.LENGTH_SHORT).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        for(int x = 0;x <z;x++) {
-            y =x*24;
-            a = Integer.parseInt(text.substring(y+1,y+2)) ;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        int y;
+        z = payload.length / 24;//num of logs
+        int a, b;
+
+        for (int x = 0; x < z; x++) {
+            y = x * 24;
+            a = Integer.parseInt(text.substring(y + 1, y + 2));
             // Log.i("INFO", "A" + a);
-            b = Integer.parseInt(text.substring(y+2,y+3)) ;
+            b = Integer.parseInt(text.substring(y + 2, y + 3));
             // Log.i("INFO","B" + b);
-            temperatureParsed[x] = a*10+b;
+            temperatureParsed[x] = a * 10 + b;
         }
 
-        drawGraph(temperatureParsed,z,0);
+        drawGraph(temperatureParsed, z, 0);
 
         TextView layout = findViewById(R.id.tv_activity_thermistorl);
         layout.setVisibility(View.VISIBLE);
         tvthermistorl.setText(text);
     }
 
-    public int getMin(int yData[]){
+    public int getMin(int yData[]) {
         int Min = yData[0];
-        for(int i = 1; i<yData.length;i++){
-            if(yData[i]<Min){
+        for (int i = 1; i < yData.length; i++) {
+            if (yData[i] < Min) {
                 Min = yData[i];
             }
         }
@@ -157,17 +187,17 @@ public class ThermistorLActivity extends AppCompatActivity {
         return Min;
     }
 
-    public int getMax(int yData[]){
+    public int getMax(int yData[]) {
         int Max = yData[0];
-        for(int i = 1; i<yData.length;i++){
-            if(yData[i]>Max) {
+        for (int i = 1; i < yData.length; i++) {
+            if (yData[i] > Max) {
                 Max = yData[i];
             }
         }
         return Max;
     }
 
-    public void drawGraph(int yData[], int numberOfData,int factors) {
+    public void drawGraph(int yData[], int numberOfData, int factors) {
         float radius = 5;
 
         int Min = getMin(yData);
@@ -182,53 +212,56 @@ public class ThermistorLActivity extends AppCompatActivity {
         int screenWidth = x[0];
         int screenHeight = x[1];
 
-        float bmpxgap = (screenWidth - (float)100.0) / numberOfData;
+        float bmpxgap = (screenWidth - (float) 100.0) / numberOfData;
 
-        LinearLayout heightLayout = (LinearLayout)findViewById(R.id.layout_thermistorlparent);
+        LinearLayout heightLayout = (LinearLayout) findViewById(R.id.layout_thermistorlparent);
         int headerLayoutParentHeight = heightLayout.getHeight();
 
-        int bmpy = (headerLayoutParentHeight)/2;
+        int bmpy = (headerLayoutParentHeight) / 2;
 
-        Bitmap bmp = Bitmap.createBitmap( screenWidth,bmpy, Bitmap.Config.ARGB_8888);
+        Bitmap bmp = Bitmap.createBitmap(screenWidth, bmpy, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bmp);
 
         int factor = 10;
-        switch (factors){
-            case 0 : factor = 10;
-                     break;
-            case 1 : factor = 20;
-                     break;
-            case 2 : factor = 25;
-                     break;
+        switch (factors) {
+            case 0:
+                factor = 10;
+                break;
+            case 1:
+                factor = 20;
+                break;
+            case 2:
+                factor = 25;
+                break;
 
         }
 ///////this is axis/////////////////
-        canvas.drawLine(50,bmpy-50, screenWidth-50,bmpy-50, paint);//x axis
-        canvas.drawLine(50, bmpy-50, 50, 50, paint);
+        canvas.drawLine(50, bmpy - 50, screenWidth - 50, bmpy - 50, paint);//x axis
+        canvas.drawLine(50, bmpy - 50, 50, 50, paint);
 
         paint.setStrokeWidth(1f);
         paint.setTextSize(30);
 /////////////////////this si the max and min text/////////////////////////////
-        canvas.drawText(Integer.toString(Min),10,(bmpy - 50)-Min*factor,paint);
-        canvas.drawText(Integer.toString(Max),10,(bmpy - 50)-Max*factor,paint);
+        canvas.drawText(Integer.toString(Min), 10, (bmpy - 50) - Min * factor, paint);
+        canvas.drawText(Integer.toString(Max), 10, (bmpy - 50) - Max * factor, paint);
 
-        int center = (Min+Max)/2;
-        int gapY = (Max-center)/2;
+        int center = (Min + Max) / 2;
+        int gapY = (Max - center) / 2;
         int j = 0;
 
-        canvas.drawText(Integer.toString(center+gapY),10,(bmpy - 50)-(center+gapY)*factor,paint);
-        canvas.drawText(Integer.toString(center-gapY),10,(bmpy - 50)-(center-gapY)*factor,paint);
+        canvas.drawText(Integer.toString(center + gapY), 10, (bmpy - 50) - (center + gapY) * factor, paint);
+        canvas.drawText(Integer.toString(center - gapY), 10, (bmpy - 50) - (center - gapY) * factor, paint);
 
 /////////////draws lines according to the max - center gap and repeat///////////////
         //////////makes the horizontal dark lines////////////////////////////////
         //starts to write only after max data
-        while((bmpy-50)-(Max+gapY*j)*factor > 50 ){
-            canvas.drawText(Integer.toString(Max+gapY*j),10,(bmpy-50)-(Max+gapY*j)*factor ,paint);
+        while ((bmpy - 50) - (Max + gapY * j) * factor > 50) {
+            canvas.drawText(Integer.toString(Max + gapY * j), 10, (bmpy - 50) - (Max + gapY * j) * factor, paint);
 
             paint.setStrokeWidth(2f);
             paint.setColor(Color.BLACK);
             paint.setAlpha(75);
-            canvas.drawLine(50, (bmpy-50)-(Max+gapY*j)*factor, screenWidth - 50, (bmpy-50)-(Max+gapY*j)*factor, paint);
+            canvas.drawLine(50, (bmpy - 50) - (Max + gapY * j) * factor, screenWidth - 50, (bmpy - 50) - (Max + gapY * j) * factor, paint);
 
             paint.setAlpha(255);
             paint.setStrokeWidth(1f);
@@ -239,13 +272,13 @@ public class ThermistorLActivity extends AppCompatActivity {
 
         //////make horizontal lines below min
         j = 0;
-        while( (bmpy - 50) - (Min- ((center-Min)/2)*j) * factor < bmpy - 50){
-            canvas.drawText(Integer.toString(Min- ((center-Min)/2)*j),10,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor ,paint);
+        while ((bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor < bmpy - 50) {
+            canvas.drawText(Integer.toString(Min - ((center - Min) / 2) * j), 10, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, paint);
 
             paint.setStrokeWidth(2f);
             paint.setColor(Color.BLACK);
             paint.setAlpha(75);
-            canvas.drawLine(50,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor , screenWidth - 50,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor , paint);
+            canvas.drawLine(50, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, screenWidth - 50, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, paint);
             j++;
             paint.setAlpha(255);
             paint.setStrokeWidth(1f);
@@ -253,53 +286,53 @@ public class ThermistorLActivity extends AppCompatActivity {
         }
 
 //////////writes the center text///////////////////////////////////
-        canvas.drawText(Integer.toString(center),10,(bmpy - 50)-center*factor,paint);
+        canvas.drawText(Integer.toString(center), 10, (bmpy - 50) - center * factor, paint);
 
 //  drawing the min max  center lines
         paint.setStrokeWidth(4f);
         paint.setColor(Color.RED);
-        canvas.drawLine(50, (bmpy - 50)-Min*factor, screenWidth - 50, (bmpy - 50)-Min*factor, paint);
-        canvas.drawLine(50, (bmpy - 50)-Max*factor, screenWidth - 50, (bmpy - 50)-Max*factor, paint);
-        canvas.drawLine(50, (bmpy - 50)-center*factor, screenWidth - 50, (bmpy - 50)-center*factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - Min * factor, screenWidth - 50, (bmpy - 50) - Min * factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - Max * factor, screenWidth - 50, (bmpy - 50) - Max * factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - center * factor, screenWidth - 50, (bmpy - 50) - center * factor, paint);
 
-        canvas.drawLine(50, (bmpy - 50)-(center+gapY)*factor, screenWidth - 50, (bmpy - 50)-(center+gapY)*factor, paint);
-        canvas.drawLine(50, (bmpy - 50)-(center-gapY)*factor, screenWidth - 50, (bmpy - 50)-(center-gapY)*factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - (center + gapY) * factor, screenWidth - 50, (bmpy - 50) - (center + gapY) * factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - (center - gapY) * factor, screenWidth - 50, (bmpy - 50) - (center - gapY) * factor, paint);
 
         paint.setStrokeWidth(1f);
         paint.setColor(Color.BLACK);
         paint.setAlpha(50);
 /////////makes grid constant
-        for(int i = 1 ;i<= 10;i++) {
+        for (int i = 1; i <= 10; i++) {
 
             paint.setAlpha(20);
-            canvas.drawLine(50, i*(bmpy - 50) / 10, screenWidth - 50, i*(bmpy - 50) / 10, paint);   //horizontal
-            canvas.drawLine(i*(screenWidth-50)/10+50,bmpy-50,i*(screenWidth-50)/10+50,50,paint);
+            canvas.drawLine(50, i * (bmpy - 50) / 10, screenWidth - 50, i * (bmpy - 50) / 10, paint);   //horizontal
+            canvas.drawLine(i * (screenWidth - 50) / 10 + 50, bmpy - 50, i * (screenWidth - 50) / 10 + 50, 50, paint);
         }
 
         paint.setStrokeWidth(3);
         paint.setAlpha(255);
         paint.setColor(Color.BLUE);
-        float prevstartx=0,prevstarty=0;
+        float prevstartx = 0, prevstarty = 0;
 
         for (int i = 0; i < numberOfData; i++) {
             canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * factor, radius, paint);
-            if(i%20 == 0){  //on every 10 data draw vertical line
+            if (i % 20 == 0) {  //on every 10 data draw vertical line
                 paint.setAlpha(255);
                 paint.setStrokeWidth(1f);
                 paint.setTextSize(20);
 
-                canvas.drawText(Integer.toString(i),40+bmpxgap*i,(bmpy - 10)  ,paint);
+                canvas.drawText(Integer.toString(i), 40 + bmpxgap * i, (bmpy - 10), paint);
 
                 paint.setStrokeWidth(2f);
                 paint.setColor(Color.BLACK);
                 paint.setAlpha(100);
-                canvas.drawLine(50 + bmpxgap * i, bmpy-50, 50 + bmpxgap * i, 50, paint);
+                canvas.drawLine(50 + bmpxgap * i, bmpy - 50, 50 + bmpxgap * i, 50, paint);
                 paint.setStrokeWidth(3);
                 paint.setAlpha(255);
                 paint.setColor(Color.BLUE);
             }
-            if( i > 0){
-                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] * factor),paint);
+            if (i > 0) {
+                canvas.drawLine(prevstartx, prevstarty, (float) (50 + bmpxgap * i), (float) ((bmpy - 50) - yData[i] * factor), paint);
             }
             prevstartx = 50 + bmpxgap * i;
             prevstarty = (bmpy - 50) - yData[i] * factor;

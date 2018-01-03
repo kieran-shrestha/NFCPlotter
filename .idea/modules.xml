@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NfcPlotter.iml" filepath="$PROJECT_DIR$/NfcPlotter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NFCPlotter.iml" filepath="$PROJECT_DIR$/NFCPlotter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

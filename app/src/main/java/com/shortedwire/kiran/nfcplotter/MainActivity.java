@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     Button button_normal_T;
     Button button_Compare;
     Button button_Version2;
+    Button button_LoadLegacy;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         button_normal_T = findViewById(R.id.B_normal_tag);
         button_Compare = findViewById(R.id.B_Compare);
         button_Version2 = findViewById(R.id.B_hexDecode);
+        button_LoadLegacy = findViewById(R.id.B_loadLegacy);
 
         button_thermistor_C.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -79,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        button_LoadLegacy.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ListLegacy.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 
