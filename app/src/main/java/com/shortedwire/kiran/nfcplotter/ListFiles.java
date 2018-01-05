@@ -2,8 +2,13 @@ package com.shortedwire.kiran.nfcplotter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -23,6 +28,10 @@ public class ListFiles extends AppCompatActivity {
     int legacy = 0;
     int compare = 0;
     int commercial = 0;
+    int printed = 0;
+
+    int longPressed = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +49,12 @@ public class ListFiles extends AppCompatActivity {
                     compare = 1;
                 }else if(key.equals("commercial")){
                     commercial = 1;
-
+                }else if(key.equals("printed")){
+                    printed = 1;
                 }
 
             }
         }
-
 
         try {
             showFiles();
@@ -56,14 +65,27 @@ public class ListFiles extends AppCompatActivity {
     }
 
     public void showFiles() throws IOException {
-
+        // this holds only the displayed files
         final  List<String> fileList = new ArrayList<String>();
-        ListView listView = (ListView) findViewById(R.id.lv_list_files);
+        final ListView listView = (ListView) findViewById(R.id.lv_list_files);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                File selected = new File(getFilesDir(),fileList.get(position));
+                longPressed = 1;
+                Log.d("FILE","LONG PRESSED "+selected.getName()+" success is " + selected.delete());
+                finish();
+                startActivity(getIntent());
+               return true;
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 ////////////////////////////for click listener//////////////////////////////////////////////////////
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(longPressed == 0 ){
                File selected = new File(fileList.get(position));
                FileInputStream fileInputStream = null;
                String text;
@@ -89,6 +111,7 @@ public class ListFiles extends AppCompatActivity {
                     }
                 }
             }
+            }
         });
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,9 +133,14 @@ public class ListFiles extends AppCompatActivity {
                 if (files[i].getName().endsWith(".com")) {
                     fileList.add(files[i].getName());
                 }
-
+            }
+            if(printed ==1 ){
+                if(files[i].getName().endsWith(".prt")){
+                    fileList.add(files[i].getName());
+                }
             }
         }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,fileList);
         listView.setAdapter(adapter);
 
@@ -131,9 +159,18 @@ public class ListFiles extends AppCompatActivity {
         } else if( commercial == 1){
             intent = new Intent(getApplicationContext(),ThermistorCActivity.class);
             commercial = 0;
+        } else if (printed ==1 ){
+            intent = new Intent(getApplicationContext(),ThermistorPActivity.class);
+            printed = 0;
         }
         intent.putExtra("dataRecover",texts);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        finish();
     }
 
 }

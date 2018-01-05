@@ -150,7 +150,7 @@ public class ThermistorCActivity extends AppCompatActivity {
             FileOutputStream fileOutputStream = null;
 
             try {
-                fileOutputStream = openFileOutput("Legacy" + dateTimeActivity.getDateTimeFileName() + ".com", Context.MODE_PRIVATE);
+                fileOutputStream = openFileOutput("Commercial" + dateTimeActivity.getDateTimeFileName() + ".com", Context.MODE_PRIVATE);
                 fileOutputStream.write(text.getBytes());
                 Toast.makeText(this, "Saved !!", Toast.LENGTH_SHORT).show();
             } catch (FileNotFoundException e) {

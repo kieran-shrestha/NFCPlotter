@@ -3,18 +3,26 @@
     xmlns:gyjmoble="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp">
+    android:layout_height="match_parent">
     <!--android:background="#04F">-->
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/colorPrimary">
+
+    </android.support.v7.widget.Toolbar>
 
     <TextView
         android:id="@+id/text0"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_below="@id/toolbar"
         android:layout_gravity="center"
-        android:layout_toStartOf="@id/text1"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
         android:text="PRINTED IC LAB">
 
     </TextView>
@@ -23,8 +31,11 @@
         android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
         android:layout_alignParentEnd="true"
         android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:text="NFC SENSOR TOOL " />
 
     <LinearLayout
@@ -33,15 +44,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text1"
         android:orientation="horizontal"
+        android:paddingTop="5dp"
         android:weightSum="2">
 
         <Button
             android:id="@+id/B_thermistor_C"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+            android:textColor="@color/colorAccent"
+            android:textSize="13dp"
+            android:layout_weight="1.5"
+            android:background="@color/colorPrimary"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="5dp"
             android:text="@string/thermistor_C" />
 
 
@@ -49,8 +64,13 @@
             android:id="@+id/B_load_commercial"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+
+            android:textColor="@color/colorAccent"
+            android:textSize="13dp"
+            android:paddingEnd="5dp"
+            android:layout_weight="0.5"
+            android:layout_marginStart="10dp"
+            android:background="@color/colorPrimary"
             android:text="Load" />
 
     </LinearLayout>
@@ -61,23 +81,32 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_commercial_load"
         android:orientation="horizontal"
+        android:paddingTop="5dp"
         android:weightSum="2">
 
         <Button
             android:id="@+id/B_thermistor_P"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+            android:textColor="@color/colorAccent"
+            android:textSize="13dp"
+            android:paddingStart="5dp"
+            android:layout_weight="1.5"
+            android:background="@color/colorPrimary"
+            android:layout_marginEnd="10dp"
             android:text="@string/thermistor_P" />
 
         <Button
             android:id="@+id/B_load_printed"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+
+            android:textColor="@color/colorAccent"
+            android:textSize="13dp"
+            android:paddingEnd="5dp"
+            android:layout_weight="0.5"
+            android:layout_marginStart="10dp"
+            android:background="@color/colorPrimary"
             android:text="Load" />
 
     </LinearLayout>
@@ -88,23 +117,33 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_printed_load"
         android:orientation="horizontal"
+        android:paddingTop="5dp"
         android:weightSum="2">
 
         <Button
             android:id="@+id/B_Compare"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+
+            android:textColor="@color/colorAccent"
+            android:textSize="13dp"
+            android:paddingStart="5dp"
+            android:layout_weight="1.5"
+            android:background="@color/colorPrimary"
+            android:layout_marginEnd="10dp"
             android:text="P VS Comm. Therm." />
 
         <Button
             android:id="@+id/B_load_pVSc"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+
+            android:textColor="@color/colorAccent"
+            android:paddingEnd="5dp"
+            android:textSize="13dp"
+            android:layout_weight="0.5"
+            android:layout_marginStart="10dp"
+            android:background="@color/colorPrimary"
             android:text="Load" />
 
     </LinearLayout>
@@ -115,23 +154,33 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_pVSc_load"
         android:orientation="horizontal"
+        android:paddingTop="5dp"
         android:weightSum="2">
 
         <Button
             android:id="@+id/B_thermistor_L"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+
+            android:textColor="@color/colorAccent"
+            android:paddingStart="5dp"
+            android:textSize="13dp"
+            android:layout_weight="1.5"
+            android:background="@color/colorPrimary"
+            android:layout_marginEnd="10dp"
             android:text="@string/thermistor_L" />
 
         <Button
             android:id="@+id/B_loadLegacy"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:backgroundTint="#05F"
+
+            android:textColor="@color/colorAccent"
+            android:paddingEnd="5dp"
+            android:textSize="13dp"
+            android:layout_weight="0.5"
+            android:layout_marginStart="10dp"
+            android:background="@color/colorPrimary"
             android:text="Load" />
 
     </LinearLayout>
@@ -141,17 +190,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_legacy_load"
+        android:textColor="@color/colorAccent"
+        android:textSize="13dp"
         android:layout_gravity="center"
-        android:backgroundTint="#05F"
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="15dp"
         android:text="Normal Read" />
 
     <Button
         android:id="@+id/B_thermistor_I"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/B_normal_tag"
         android:layout_gravity="center"
-        android:backgroundTint="#05F"
+        android:textColor="@color/colorAccent"
+        android:textSize="13dp"
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="5dp"
         android:enabled="false"
         android:text="@string/thermistor_I" />
 
@@ -160,7 +215,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/B_thermistor_I"
+        android:textColor="@color/colorAccent"
         android:layout_gravity="center"
-        android:backgroundTint="#05F"
+        android:textSize="13dp"
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="5dp"
         android:text="FIRMWARE V2.0" />
 </RelativeLayout>

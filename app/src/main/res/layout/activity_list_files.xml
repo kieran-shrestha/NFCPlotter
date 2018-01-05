@@ -5,30 +5,30 @@
     android:id="@+id/layout_list_legacy_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Saved Legacy tags records">
+        android:text="Saved tags records(Long press to delete)">
 
     </TextView>
+
 
     <LinearLayout
         android:id="@+id/layout_list_files"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="1">
         
         <ListView
             android:id="@+id/lv_list_files"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
         </ListView>
 
     </LinearLayout>
-
 
 </LinearLayout>

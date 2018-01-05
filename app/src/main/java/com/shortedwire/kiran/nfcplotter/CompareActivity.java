@@ -151,7 +151,7 @@ public class CompareActivity extends AppCompatActivity {
             FileOutputStream fileOutputStream = null;
 
             try {
-                fileOutputStream = openFileOutput("Legacy" + dateTimeActivity.getDateTimeFileName() + ".cmp", Context.MODE_PRIVATE);
+                fileOutputStream = openFileOutput("Compare" + dateTimeActivity.getDateTimeFileName() + ".cmp", Context.MODE_PRIVATE);
                 fileOutputStream.write(text.getBytes());
                 Toast.makeText(this, "Saved !!", Toast.LENGTH_SHORT).show();
             } catch (FileNotFoundException e) {
