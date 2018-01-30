@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 
+import static java.lang.Math.abs;
 
 
 /**
@@ -65,7 +66,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                drawGraph(temperatureParsed,numberofData,progress);
+                drawGraph(temperatureParsed, numberofData, progress);
             }
 
             @Override
@@ -126,7 +127,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
         // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
         try {
             // Get the Text
-            text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1,"ISO-8859-1" );//*/ textEncoding);
+            text = new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, "ISO-8859-1");//*/ textEncoding);
         } catch (UnsupportedEncodingException e) {
             Log.e("UnsupportedEncoding", e.toString());
         }
@@ -137,49 +138,58 @@ public class FirmwareIITActivity extends AppCompatActivity {
         numberofData = (payload.length - 20) / 3 - 1;
         StringBuilder sb = new StringBuilder();
 
-        String[] dateTime = dateTimeActivity.getDateTime(numberofData,intervalLog);
+        String[] dateTime = dateTimeActivity.getDateTime(numberofData, intervalLog);
 
         sb.append(header);
         for (int x = 19, y = 0; y < numberofData; x += 3, y++) {
-            temperatureParsed[y] = text.charAt(x+1);
+            temperatureParsed[y] = text.charAt(x + 1);
             temperatureParsed[y] <<= 8;
             temperatureParsed[y] |= text.charAt(x);
 
-            double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
-            //   Log.i("INFO"," digital "+y+ ' ' +temperatureParsed[y]);
+
+            Log.d("temp", "hex code" + temperatureParsed[y]);
+
+            //double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
+            double analogVolt = (1800.0 * temperatureParsed[y] / 16384.0);
+            //************************************************************************
+            //************************Bijen's sensor code*****************************
+            //************************************************************************/
+            double tempConv = ((analogVolt / 240.0) * 100000);
+            int C = (int) (100 * (90 + (-0.0072 * tempConv + 392.37132)));
+
             //************************************************************************/
             //*******************For Commercial thermistor **************************/
-            double tempConv = ((analogVolt / 270.0) * 100000);
-            //gives result in 100 multiplied
-            double C =  ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15);
-            C *= 100;
+            //    double tempConv = ((analogVolt / 270.0) * 100000);
+            //    int  C = (int)(100* ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15));
 
-            temperatureParsed[y] = (int) C;
+            Log.d("temp", "temperature Parsed " + analogVolt);
+            Log.d("temp", "tempConv " + tempConv);
+            Log.d("temp", "C " + C);
 
-            // Log.i("INFO"," analog "+y+ ' ' +analogVolt);
-            //Log.i("INFO"," temp "+y+ ' ' +C);
+            temperatureParsed[y] = C;
 
             sb.append(' ');
-            sb.append(temperatureParsed[y]/100);
+            sb.append(temperatureParsed[y] / 100);
             sb.append(".");
-            sb.append(temperatureParsed[y]%100);
-            temperatureParsed[y] /=100;
+            sb.append(abs(temperatureParsed[y] % 100));
+            temperatureParsed[y] /= 100;
             sb.append(dateTime[y]);//new line is added from date and time
         }
 
         text = sb.toString();
 
-        drawGraph(temperatureParsed, numberofData,0);
+
+        drawGraph(temperatureParsed, numberofData, 0);
 
         TextView layout = findViewById(R.id.tv_activity_thermistor_vii);
         layout.setVisibility(View.VISIBLE);
         tvThermistorII.setText(text);
     }
 
-    public int getMin(int yData[]){
+    public int getMin(int yData[],int length) {
         int Min = yData[0];
-        for(int i = 1; i<yData.length;i++){
-            if(yData[i]<Min){
+        for (int i = 1; i < length; i++) {
+            if (yData[i] < Min) {
                 Min = yData[i];
             }
         }
@@ -187,10 +197,12 @@ public class FirmwareIITActivity extends AppCompatActivity {
         return Min;
     }
 
-    public int getMax(int yData[]){
+
+
+    public int getMax(int yData[],int length) {
         int Max = yData[0];
-        for(int i = 1; i<yData.length;i++){
-            if(yData[i]>Max) {
+        for (int i = 1; i < length; i++) {
+            if (yData[i] > Max) {
                 Max = yData[i];
             }
         }
@@ -198,11 +210,14 @@ public class FirmwareIITActivity extends AppCompatActivity {
     }
 
 
-    public void drawGraph(int yData[], int numberOfData,int factors) {
+    public void drawGraph(int yData[], int numberOfData, int factors) {
         float radius = 5;
 
-        int Min = getMin(yData);
-        int Max = getMax(yData);
+        int Min = getMin(yData,numberOfData);
+        int Max = getMax(yData,numberOfData);
+
+        int oldMin = Min;
+        int oldMax = Max;
 
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);
@@ -226,59 +241,91 @@ public class FirmwareIITActivity extends AppCompatActivity {
         Canvas canvas = new Canvas(bmp);
 
         int factor = 10;
-        switch (factors){
-            case 0 : factor = 10;
+        switch (factors) {
+            case 0:
+                factor = 10;
                 break;
-            case 1 : factor = 20;
+            case 1:
+                factor = 20;
                 break;
-            case 2 : factor = 25;
+            case 2:
+                factor = 25;
                 break;
 
         }
+
+        int minSet = 0;
+
+        if (Min < 0) {
+            minSet = 1;
+            for (int i = 0; i < numberOfData; i++) {
+                yData[i] += abs(Min) + 10;
+            }
+
+        }
+
+        Min = getMin(yData,numberOfData);
+        Max = getMax(yData,numberOfData);
+
+
 ///////this is axis/////////////////
-        canvas.drawLine(50,bmpy-50, screenWidth-50,bmpy-50, paint);//x axis
-        canvas.drawLine(50, bmpy-50, 50, 50, paint);
+        canvas.drawLine(50, bmpy - 50, screenWidth - 50, bmpy - 50, paint);//x axis
+        canvas.drawLine(50, bmpy - 50, 50, 50, paint);
 
         paint.setStrokeWidth(1f);
         paint.setTextSize(30);
-/////////////////////this si the max and min text/////////////////////////////
-        canvas.drawText(Integer.toString(Min),10,(bmpy - 50)-Min*factor,paint);
-        canvas.drawText(Integer.toString(Max),10,(bmpy - 50)-Max*factor,paint);
+/////////////////////this is the max and min text/////////////////////////////
+        if( minSet ==0 ) {
+            canvas.drawText(Integer.toString(Min), 10, (bmpy - 50) - Min * factor, paint);
+            canvas.drawText(Integer.toString(Max), 10, (bmpy - 50) - Max * factor, paint);
+        } else if( minSet ==1 ){
+           // canvas.drawText(Integer.toString(oldMin), 5, (bmpy - 50) - Min * factor, paint);
+          //  canvas.drawText(Integer.toString(oldMax), 5, (bmpy - 50) - Max * factor, paint);
+        }
 
-        int center = (Min+Max)/2;
-        int gapY = (Max-center)/2;
+        int center;
+        int gapY;
+        int oldCenter;
+
+
+        center = (Min + Max) / 2;
+        oldCenter = (oldMin + oldMax )/2;
+        gapY = (Max - center) / 2;
+
         int j = 0;
 
-        canvas.drawText(Integer.toString(center+gapY),10,(bmpy - 50)-(center+gapY)*factor,paint);
-        canvas.drawText(Integer.toString(center-gapY),10,(bmpy - 50)-(center-gapY)*factor,paint);
+        canvas.drawText(Integer.toString(oldCenter + gapY), 10, (bmpy - 50) - (center + gapY) * factor, paint);
+        canvas.drawText(Integer.toString(oldCenter - gapY), 10, (bmpy - 50) - (center - gapY) * factor, paint);
 
 /////////////draws lines according to the max - center gap and repeat///////////////
         //////////makes the horizontal dark lines////////////////////////////////
         //starts to write only after max data
-        while((bmpy-50)-(Max+gapY*j)*factor > 50 ){
-            canvas.drawText(Integer.toString(Max+gapY*j),10,(bmpy-50)-(Max+gapY*j)*factor ,paint);
+        while ((bmpy - 50) - (Max + gapY * j) * factor > 50) {
+            canvas.drawText(Integer.toString(oldMax + gapY * j), 10, (bmpy - 50) - (Max + gapY * j) * factor, paint);
 
             paint.setStrokeWidth(2f);
             paint.setColor(Color.BLACK);
             paint.setAlpha(75);
-            canvas.drawLine(50, (bmpy-50)-(Max+gapY*j)*factor, screenWidth - 50, (bmpy-50)-(Max+gapY*j)*factor, paint);
+            canvas.drawLine(50, (bmpy - 50) - (Max + gapY * j) * factor, screenWidth - 50, (bmpy - 50) - (Max + gapY * j) * factor, paint);
 
             paint.setAlpha(255);
             paint.setStrokeWidth(1f);
             paint.setTextSize(30);
 
             j++;
+            if (j > 500)
+                break;
         }
 
         //////make horizontal lines below min
         j = 0;
-        while( (bmpy - 50) - (Min- ((center-Min)/2)*j) * factor < bmpy - 50){
-            canvas.drawText(Integer.toString(Min- ((center-Min)/2)*j),10,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor ,paint);
+        while ((bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor < bmpy - 50) {
+            canvas.drawText(Integer.toString(oldMin - ((oldCenter - oldMin) / 2) * j), 10, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, paint);
 
             paint.setStrokeWidth(2f);
             paint.setColor(Color.BLACK);
             paint.setAlpha(75);
-            canvas.drawLine(50,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor , screenWidth - 50,(bmpy - 50) - (Min- ((center-Min)/2)*j) * factor , paint);
+            canvas.drawLine(50, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, screenWidth - 50, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, paint);
             j++;
             paint.setAlpha(255);
             paint.setStrokeWidth(1f);
@@ -286,53 +333,54 @@ public class FirmwareIITActivity extends AppCompatActivity {
         }
 
 //////////writes the center text///////////////////////////////////
-        canvas.drawText(Integer.toString(center),10,(bmpy - 50)-center*factor,paint);
+        canvas.drawText(Integer.toString(oldCenter), 10, (bmpy - 50) - center * factor, paint);
 
 //  drawing the min max  center lines
         paint.setStrokeWidth(4f);
         paint.setColor(Color.RED);
-        canvas.drawLine(50, (bmpy - 50)-Min*factor, screenWidth - 50, (bmpy - 50)-Min*factor, paint);
-        canvas.drawLine(50, (bmpy - 50)-Max*factor, screenWidth - 50, (bmpy - 50)-Max*factor, paint);
-        canvas.drawLine(50, (bmpy - 50)-center*factor, screenWidth - 50, (bmpy - 50)-center*factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - Min * factor, screenWidth - 50, (bmpy - 50) - Min * factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - Max * factor, screenWidth - 50, (bmpy - 50) - Max * factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - center * factor, screenWidth - 50, (bmpy - 50) - center * factor, paint);
 
-        canvas.drawLine(50, (bmpy - 50)-(center+gapY)*factor, screenWidth - 50, (bmpy - 50)-(center+gapY)*factor, paint);
-        canvas.drawLine(50, (bmpy - 50)-(center-gapY)*factor, screenWidth - 50, (bmpy - 50)-(center-gapY)*factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - (center + gapY) * factor, screenWidth - 50, (bmpy - 50) - (center + gapY) * factor, paint);
+        canvas.drawLine(50, (bmpy - 50) - (center - gapY) * factor, screenWidth - 50, (bmpy - 50) - (center - gapY) * factor, paint);
 
         paint.setStrokeWidth(1f);
         paint.setColor(Color.BLACK);
         paint.setAlpha(50);
 /////////makes grid constant
-        for(int i = 1 ;i<= 10;i++) {
+        for (int i = 1; i <= 10; i++) {
 
             paint.setAlpha(20);
-            canvas.drawLine(50, i*(bmpy - 50) / 10, screenWidth - 50, i*(bmpy - 50) / 10, paint);   //horizontal
-            canvas.drawLine(i*(screenWidth-50)/10+50,bmpy-50,i*(screenWidth-50)/10+50,50,paint);
+            canvas.drawLine(50, i * (bmpy - 50) / 10, screenWidth - 50, i * (bmpy - 50) / 10, paint);   //horizontal
+            canvas.drawLine(i * (screenWidth - 50) / 10 + 50, bmpy - 50, i * (screenWidth - 50) / 10 + 50, 50, paint);
         }
 
         paint.setStrokeWidth(3);
         paint.setAlpha(255);
         paint.setColor(Color.BLUE);
-        float prevstartx=0,prevstarty=0;
+        float prevstartx = 0, prevstarty = 0;
+
 
         for (int i = 0; i < numberOfData; i++) {
             canvas.drawCircle(50 + bmpxgap * i, (bmpy - 50) - yData[i] * factor, radius, paint);
-            if(i%20 == 0){  //on every 10 data draw vertical line
+            if (i % 20 == 0) {  //on every 10 data draw vertical line
                 paint.setAlpha(255);
                 paint.setStrokeWidth(1f);
                 paint.setTextSize(20);
 
-                canvas.drawText(Integer.toString(i),40+bmpxgap*i,(bmpy - 10)  ,paint);
+                canvas.drawText(Integer.toString(i), 40 + bmpxgap * i, (bmpy - 10), paint);
 
                 paint.setStrokeWidth(2f);
                 paint.setColor(Color.BLACK);
                 paint.setAlpha(100);
-                canvas.drawLine(50 + bmpxgap * i, bmpy-50, 50 + bmpxgap * i, 50, paint);
+                canvas.drawLine(50 + bmpxgap * i, bmpy - 50, 50 + bmpxgap * i, 50, paint);
                 paint.setStrokeWidth(3);
                 paint.setAlpha(255);
                 paint.setColor(Color.BLUE);
             }
-            if( i > 0){
-                canvas.drawLine(prevstartx,prevstarty,(float)(50 + bmpxgap * i), (float)((bmpy - 50) - yData[i] * factor),paint);
+            if (i > 0) {
+                canvas.drawLine(prevstartx, prevstarty, (float) (50 + bmpxgap * i), (float) ((bmpy - 50) - yData[i] * factor), paint);
             }
             prevstartx = 50 + bmpxgap * i;
             prevstarty = (bmpy - 50) - yData[i] * factor;
