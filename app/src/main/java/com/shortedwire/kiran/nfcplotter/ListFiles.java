@@ -29,6 +29,7 @@ public class ListFiles extends AppCompatActivity {
     int compare = 0;
     int commercial = 0;
     int printed = 0;
+    int hexed = 0;
 
     int longPressed = 0;
 
@@ -51,6 +52,8 @@ public class ListFiles extends AppCompatActivity {
                     commercial = 1;
                 }else if(key.equals("printed")){
                     printed = 1;
+                }else if (key.equals("hexed")){
+                    hexed = 1;
                 }
 
             }
@@ -139,6 +142,11 @@ public class ListFiles extends AppCompatActivity {
                     fileList.add(files[i].getName());
                 }
             }
+            if(hexed == 1){
+                if(files[i].getName().endsWith(".hxd")){
+                    fileList.add(files[i].getName());
+                }
+            }
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,fileList);
@@ -162,6 +170,9 @@ public class ListFiles extends AppCompatActivity {
         } else if (printed ==1 ){
             intent = new Intent(getApplicationContext(),ThermistorPActivity.class);
             printed = 0;
+        } else if (hexed == 1){
+            intent = new Intent(getApplicationContext(),FirmwareIITActivity.class);
+            hexed = 0;
         }
         intent.putExtra("dataRecover",texts);
         startActivity(intent);

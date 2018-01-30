@@ -185,11 +185,49 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_FII_load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_legacy_load"
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/B_hexDecode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+
+            android:textColor="@color/colorAccent"
+            android:paddingStart="5dp"
+            android:textSize="13dp"
+            android:layout_weight="1.5"
+            android:background="@color/colorPrimary"
+            android:layout_marginEnd="10dp"
+            android:text="FIRMWARE V2.0">
+        </Button>
+
+        <Button
+            android:id="@+id/B_loadHex"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+
+            android:layout_marginStart="10dp"
+            android:layout_weight="0.5"
+            android:background="@color/colorPrimary"
+            android:paddingEnd="5dp"
+            android:text="Load"
+            android:textColor="@color/colorAccent"
+            android:textSize="13dp" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/B_normal_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ll_legacy_load"
+        android:layout_below="@id/ll_FII_load"
         android:textColor="@color/colorAccent"
         android:textSize="13dp"
         android:layout_gravity="center"
@@ -210,15 +248,5 @@
         android:enabled="false"
         android:text="@string/thermistor_I" />
 
-    <Button
-        android:id="@+id/B_hexDecode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/B_thermistor_I"
-        android:textColor="@color/colorAccent"
-        android:layout_gravity="center"
-        android:textSize="13dp"
-        android:background="@color/colorPrimary"
-        android:layout_marginTop="5dp"
-        android:text="FIRMWARE V2.0" />
+
 </RelativeLayout>

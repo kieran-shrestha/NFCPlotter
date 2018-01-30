@@ -21,12 +21,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static java.lang.Math.abs;
@@ -47,6 +51,9 @@ public class FirmwareIITActivity extends AppCompatActivity {
     SeekBar seekbar;
 
     DateTimeActivity dateTimeActivity = new DateTimeActivity();
+
+    String dataRecovered;
+    int recovery = 0;
 
     IntentFilter[] filters = new IntentFilter[1];
     int numberofData;
@@ -77,6 +84,30 @@ public class FirmwareIITActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        if(savedInstanceState == null){
+            Bundle extras = getIntent().getExtras();
+            if(extras == null){
+
+            }else {
+                dataRecovered = extras.getString("dataRecover");
+                recovery = 1;
+            }
+
+        }
+
+        final LinearLayout layout = (LinearLayout) findViewById(R.id.layout_thermistorvii_parent);
+        ViewTreeObserver viewTreeObserver = layout.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if(recovery == 1){
+                    recovery = 0;
+                    buildTagText(dataRecovered,0);
+                }
             }
         });
 
@@ -118,7 +149,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
     }
 
     private void buildTagViews(NdefMessage[] msgs) {
-        if (msgs == null || msgs.length == 0) return;
+        if (msgs == null || msgs.length == 0)
+            return ;
 
         String text = "";
         byte[] payload = msgs[0].getRecords()[0].getPayload();
@@ -132,10 +164,35 @@ public class FirmwareIITActivity extends AppCompatActivity {
             Log.e("UnsupportedEncoding", e.toString());
         }
 
+       buildTagText(text,1);
+    }
+
+    public void buildTagText(String text,int writeFile){
+        ///////////////write section
+        FileOutputStream fileOutputStream = null;
+        if(writeFile == 1) {
+            try {
+                fileOutputStream = openFileOutput("Encoded" + dateTimeActivity.getDateTimeFileName() + ".hxd", Context.MODE_PRIVATE);
+                fileOutputStream.write(text.getBytes());
+                Toast.makeText(this, "Saved !!", Toast.LENGTH_SHORT).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+//////////////upto here is added
+
         String header = text.substring(0, 18);   //this is the serial and name
         int intervalLog = text.charAt(18);
 
-        numberofData = (payload.length - 20) / 3 - 1;
+        numberofData = (text.length() - 20) / 3 - 1;
         StringBuilder sb = new StringBuilder();
 
         String[] dateTime = dateTimeActivity.getDateTime(numberofData, intervalLog);
@@ -185,6 +242,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
         layout.setVisibility(View.VISIBLE);
         tvThermistorII.setText(text);
     }
+
+
 
     public int getMin(int yData[],int length) {
         int Min = yData[0];

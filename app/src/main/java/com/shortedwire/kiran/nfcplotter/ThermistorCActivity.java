@@ -210,9 +210,9 @@ public class ThermistorCActivity extends AppCompatActivity {
         tvthermistorc.setText(text);
     }
 
-    public int getMin(int yData[]){
+    public int getMin(int yData[], int length){
         int Min = yData[0];
-        for(int i = 1; i<yData.length;i++){
+        for(int i = 1; i<length;i++){
             if(yData[i]<Min){
                 Min = yData[i];
             }
@@ -221,9 +221,9 @@ public class ThermistorCActivity extends AppCompatActivity {
         return Min;
     }
 
-    public int getMax(int yData[]){
+    public int getMax(int yData[], int length){
         int Max = yData[0];
-        for(int i = 1; i<yData.length;i++){
+        for(int i = 1; i<length;i++){
             if(yData[i]>Max) {
                 Max = yData[i];
             }
@@ -235,8 +235,8 @@ public class ThermistorCActivity extends AppCompatActivity {
     public void drawGraph(int yData[], int numberOfData,int factors) {
         float radius = 5;
 
-        int Min = getMin(yData);
-        int Max = getMax(yData);
+        int Min = getMin(yData,numberOfData);
+        int Max = getMax(yData,numberOfData);
 
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);

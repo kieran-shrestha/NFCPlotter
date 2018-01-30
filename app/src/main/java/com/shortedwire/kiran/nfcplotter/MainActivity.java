@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     Button button_LoadCompare;
     Button button_LoadCommercial;
     Button button_LoadPrinted;
+    Button button_LoadHex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         button_LoadCompare = findViewById(R.id.B_load_pVSc);
         button_LoadCommercial = findViewById(R.id.B_load_commercial);
         button_LoadPrinted = findViewById(R.id.B_load_printed);
+        button_LoadHex = findViewById(R.id.B_loadHex);
 
         button_thermistor_C.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -123,6 +125,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),ListFiles.class);
                 intent.putExtra("LoadOption","printed");
+                startActivity(intent);
+            }
+        });
+
+        button_LoadHex.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ListFiles.class);
+                intent.putExtra("LoadOption","hexed");
                 startActivity(intent);
             }
         });
