@@ -212,7 +212,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
             //************************Bijen's sensor code*****************************
             //************************************************************************/
             double tempConv = ((analogVolt / 240.0) * 100000);
-            int C = (int) (100 * (90 + (-0.0072 * tempConv + 392.37132)));
+            int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));
 
             //************************************************************************/
             //*******************For Commercial thermistor **************************/
@@ -318,7 +318,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
         if (Min < 0) {
             minSet = 1;
             for (int i = 0; i < numberOfData; i++) {
-                yData[i] += abs(Min) + 10;
+                yData[i] += abs(Min) + 30;
             }
 
         }
@@ -350,6 +350,11 @@ public class FirmwareIITActivity extends AppCompatActivity {
         center = (Min + Max) / 2;
         oldCenter = (oldMin + oldMax )/2;
         gapY = (Max - center) / 2;
+        int gapYmin = (center - Min )/2;
+        if(gapYmin < 10)
+             gapYmin += 10;
+        if(gapY < 10 )
+            gapY += 10;
 
         int j = 0;
 
@@ -379,12 +384,12 @@ public class FirmwareIITActivity extends AppCompatActivity {
         //////make horizontal lines below min
         j = 0;
         while ((bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor < bmpy - 50) {
-            canvas.drawText(Integer.toString(oldMin - ((oldCenter - oldMin) / 2) * j), 10, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, paint);
+            canvas.drawText(Integer.toString(oldMin - ((oldCenter - oldMin) / 2) * j), 10, (bmpy - 50) - (Min - gapYmin * j) * factor, paint);
 
             paint.setStrokeWidth(2f);
             paint.setColor(Color.BLACK);
             paint.setAlpha(75);
-            canvas.drawLine(50, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, screenWidth - 50, (bmpy - 50) - (Min - ((center - Min) / 2) * j) * factor, paint);
+            canvas.drawLine(50, (bmpy - 50) - (Min - gapYmin * j) * factor, screenWidth - 50, (bmpy - 50) - (Min - gapYmin * j) * factor, paint);
             j++;
             paint.setAlpha(255);
             paint.setStrokeWidth(1f);
@@ -401,8 +406,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
         canvas.drawLine(50, (bmpy - 50) - Max * factor, screenWidth - 50, (bmpy - 50) - Max * factor, paint);
         canvas.drawLine(50, (bmpy - 50) - center * factor, screenWidth - 50, (bmpy - 50) - center * factor, paint);
 
-        canvas.drawLine(50, (bmpy - 50) - (center + gapY) * factor, screenWidth - 50, (bmpy - 50) - (center + gapY) * factor, paint);
-        canvas.drawLine(50, (bmpy - 50) - (center - gapY) * factor, screenWidth - 50, (bmpy - 50) - (center - gapY) * factor, paint);
+       // canvas.drawLine(50, (bmpy - 50) - (center + gapY) * factor, screenWidth - 50, (bmpy - 50) - (center + gapY) * factor, paint);
+      //  canvas.drawLine(50, (bmpy - 50) - (center - gapY) * factor, screenWidth - 50, (bmpy - 50) - (center - gapY) * factor, paint);
 
         paint.setStrokeWidth(1f);
         paint.setColor(Color.BLACK);

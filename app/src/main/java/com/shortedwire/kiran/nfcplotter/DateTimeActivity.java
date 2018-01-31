@@ -24,6 +24,8 @@ public class DateTimeActivity {
         calendar = new Calendar[numOfLogs];
         String[] dateTime;
         dateTime = new String[numOfLogs];
+        String[] holder;
+        holder = new String[numOfLogs];
 
         for (int i = 0; i < numOfLogs; i++) {
 
@@ -47,7 +49,13 @@ public class DateTimeActivity {
 //            Log.i("INFO",dateTime[i]);
 
         }
-        return dateTime;
+
+        for ( int i = 0;i< numOfLogs;i++){
+            holder[i] = dateTime[numOfLogs-i-1];
+
+        }
+
+        return holder;
     }
 
     public String getDateTimeFileName() {
