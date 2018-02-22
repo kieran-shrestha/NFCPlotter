@@ -180,7 +180,7 @@ public class CompareActivity extends AppCompatActivity {
             // Log.i("INFO", "A" + a);
             b = Integer.parseInt(text.substring(y + 2, y + 3));
             // Log.i("INFO","B" + b);
-            temperatureParsed0[x] = a * 10 + b;
+            temperatureParsed0[x] = (a * 10 + b)-70;
 
             a = Integer.parseInt(text.substring(y + 8, y + 10));
             temperatureParsed1[x] = a;

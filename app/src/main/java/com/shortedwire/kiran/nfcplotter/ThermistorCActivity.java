@@ -190,9 +190,9 @@ public class ThermistorCActivity extends AppCompatActivity {
             double tempConv = ((temperatureParsed[y] / 270.0) * 100000);
             int C = (int) ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15);
 
-            Log.d("temp","temperature Parsed " + temperatureParsed[y]);
-            Log.d("temp","tempConv "+tempConv);
-            Log.d("temp","C "+C);
+           // Log.d("temp","temperature Parsed " + temperatureParsed[y]);
+          //  Log.d("temp","tempConv "+tempConv);
+          //  Log.d("temp","C "+C);
 
             temperatureParsed[y] = C;
 

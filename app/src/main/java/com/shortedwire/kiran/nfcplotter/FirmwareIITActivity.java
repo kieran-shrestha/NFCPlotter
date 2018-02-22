@@ -192,6 +192,9 @@ public class FirmwareIITActivity extends AppCompatActivity {
         String header = text.substring(0, 18);   //this is the serial and name
         int intervalLog = text.charAt(18);
 
+
+        Log.d("NEG","interval of log is "+ intervalLog);
+
         numberofData = (text.length() - 20) / 3 - 1;
         StringBuilder sb = new StringBuilder();
 
@@ -212,16 +215,18 @@ public class FirmwareIITActivity extends AppCompatActivity {
             //************************Bijen's sensor code*****************************
             //************************************************************************/
             double tempConv = ((analogVolt / 240.0) * 100000);
-            int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));
+            int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));   // sensor 10
+           // int C = (int) (100 * (90 + (-0.0072 * tempConv + 392.37132)));   // sensor 9
+           // int C = (int) (100 * (32.5 + (-0.00912 * tempConv + 388.19)));   //sensor 8
 
             //************************************************************************/
             //*******************For Commercial thermistor **************************/
             //    double tempConv = ((analogVolt / 270.0) * 100000);
             //    int  C = (int)(100* ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15));
 
-            Log.d("temp", "temperature Parsed " + analogVolt);
-            Log.d("temp", "tempConv " + tempConv);
-            Log.d("temp", "C " + C);
+          //  Log.d("temp", "temperature Parsed " + analogVolt);
+         //   Log.d("temp", "tempConv " + tempConv);
+        //    Log.d("temp", "C " + C);
 
             temperatureParsed[y] = C;
 
@@ -243,8 +248,6 @@ public class FirmwareIITActivity extends AppCompatActivity {
         tvThermistorII.setText(text);
     }
 
-
-
     public int getMin(int yData[],int length) {
         int Min = yData[0];
         for (int i = 1; i < length; i++) {
@@ -256,8 +259,6 @@ public class FirmwareIITActivity extends AppCompatActivity {
         return Min;
     }
 
-
-
     public int getMax(int yData[],int length) {
         int Max = yData[0];
         for (int i = 1; i < length; i++) {
@@ -267,7 +268,6 @@ public class FirmwareIITActivity extends AppCompatActivity {
         }
         return Max;
     }
-
 
     public void drawGraph(int yData[], int numberOfData, int factors) {
         float radius = 5;
@@ -377,7 +377,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
             paint.setTextSize(30);
 
             j++;
-            if (j > 500)
+            if (j > 100)
                 break;
         }
 
@@ -391,6 +391,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
             paint.setAlpha(75);
             canvas.drawLine(50, (bmpy - 50) - (Min - gapYmin * j) * factor, screenWidth - 50, (bmpy - 50) - (Min - gapYmin * j) * factor, paint);
             j++;
+            if (j > 100)
+                break;
             paint.setAlpha(255);
             paint.setStrokeWidth(1f);
             paint.setTextSize(30);
