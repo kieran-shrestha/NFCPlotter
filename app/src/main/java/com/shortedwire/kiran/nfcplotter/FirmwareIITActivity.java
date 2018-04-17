@@ -215,8 +215,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
             //************************Bijen's sensor code*****************************
             //************************************************************************/
             double tempConv = ((analogVolt / 240.0) * 100000);
-            int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));   // sensor 10
-           // int C = (int) (100 * (90 + (-0.0072 * tempConv + 392.37132)));   // sensor 9
+            //int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));   // sensor 10
+           int C = (int) (100 * (45 + (-0.0072 * tempConv + 392.37132)));   // sensor 9
            // int C = (int) (100 * (32.5 + (-0.00912 * tempConv + 388.19)));   //sensor 8
 
             //************************************************************************/
@@ -224,9 +224,9 @@ public class FirmwareIITActivity extends AppCompatActivity {
             //    double tempConv = ((analogVolt / 270.0) * 100000);
             //    int  C = (int)(100* ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15));
 
-          //  Log.d("temp", "temperature Parsed " + analogVolt);
-         //   Log.d("temp", "tempConv " + tempConv);
-        //    Log.d("temp", "C " + C);
+            Log.d("temp", "temperature Parsed " + analogVolt);
+            Log.d("temp", "tempConv " + tempConv);
+            Log.d("temp", "C " + C);
 
             temperatureParsed[y] = C;
 
