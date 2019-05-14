@@ -228,6 +228,11 @@ public class FirmwareIITActivity extends AppCompatActivity {
             Log.d("temp", "tempConv " + tempConv);
             Log.d("temp", "C " + C);
 
+            sb.append(' ');
+            sb.append(", R: ,");
+            sb.append((int)tempConv);
+            sb.append(", ");
+
             temperatureParsed[y] = C;
 
             sb.append(' ');
