@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -137,6 +138,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
                 || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
                 || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            Tag tagId = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             NdefMessage[] msgs = null;
             if (rawMsgs != null) {
                 msgs = new NdefMessage[rawMsgs.length];
@@ -144,8 +146,26 @@ public class FirmwareIITActivity extends AppCompatActivity {
                     msgs[i] = (NdefMessage) rawMsgs[i];
                 }
             }
+            Log.d("NFCID","tag id is " + bytesToHexString(tagId.getId()));
             buildTagViews(msgs);
         }
+    }
+
+    private String bytesToHexString(byte[] src) {
+        StringBuilder stringBuilder = new StringBuilder("0x");
+        if (src == null || src.length <= 0) {
+            return null;
+        }
+
+        char[] buffer = new char[2];
+        for (int i = 0; i < src.length; i++) {
+            buffer[0] = Character.forDigit((src[i] >>> 4) & 0x0F, 16);
+            buffer[1] = Character.forDigit(src[i] & 0x0F, 16);
+            System.out.println(buffer);
+            stringBuilder.append(buffer);
+        }
+
+        return stringBuilder.toString();
     }
 
     private void buildTagViews(NdefMessage[] msgs) {
@@ -210,13 +230,14 @@ public class FirmwareIITActivity extends AppCompatActivity {
             Log.d("temp", "hex code" + temperatureParsed[y]);
 
             //double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
-            double analogVolt = (1800.0 * temperatureParsed[y] / 16384.0);
+//            double analogVolt = (1800.0 * temperatureParsed[y] / 16384.0);
+            double analogVolt = (112.5 * temperatureParsed[y] / 16384.0);//2019/02/13 SDIGAIN_8 used
             //************************************************************************
             //************************Bijen's sensor code*****************************
             //************************************************************************/
-            double tempConv = ((analogVolt / 240.0) * 100000);
+            double tempConv = ((analogVolt / 270.0) * 100000);
             //int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));   // sensor 10
-           int C = (int) (100 * (45 + (-0.0072 * tempConv + 392.37132)));   // sensor 9
+           int C = (int) (100 *  (0.028116 * tempConv - 466.2849));   // sensor 9
            // int C = (int) (100 * (32.5 + (-0.00912 * tempConv + 388.19)));   //sensor 8
 
             //************************************************************************/
@@ -233,7 +254,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
             sb.append((int)tempConv);
             sb.append(", ");
 
-            temperatureParsed[y] = C;
+            temperatureParsed[y] = C;   //this is final temperature
 
             sb.append(' ');
             sb.append(temperatureParsed[y] / 100);
