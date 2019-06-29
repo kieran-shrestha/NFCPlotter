@@ -30,12 +30,8 @@ public class DateTimeActivity {
         for (int i = 0; i < numOfLogs; i++) {
 
             calendar[i] = Calendar.getInstance();
-            if (i == 0) {
-                calendar[i].add(Calendar.MINUTE, -(intervalLog / 60));
-            } else {
+            calendar[i].add(Calendar.MINUTE, - (intervalLog/60 * i ));
 
-                calendar[i].add(Calendar.MINUTE, -(4 * i + intervalLog / 60));
-            }
             String formatMonth = String.format(Locale.US, "%02d", calendar[i].get(Calendar.MONTH) + 1);
             String formatDate = String.format(Locale.US, "%02d", calendar[i].get(Calendar.DATE));
             String formatHour = String.format(Locale.US, "%02d", calendar[i].get(Calendar.HOUR_OF_DAY));

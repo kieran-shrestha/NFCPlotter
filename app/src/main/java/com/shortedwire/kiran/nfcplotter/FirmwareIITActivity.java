@@ -53,7 +53,7 @@ public class FirmwareIITActivity extends AppCompatActivity {
 
     DateTimeActivity dateTimeActivity = new DateTimeActivity();
 
-    String dataRecovered;
+    String dataRecovered,NFCId;
     int recovery = 0;
 
     IntentFilter[] filters = new IntentFilter[1];
@@ -146,7 +146,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
                     msgs[i] = (NdefMessage) rawMsgs[i];
                 }
             }
-            Log.d("NFCID","tag id is " + bytesToHexString(tagId.getId()));
+            NFCId = bytesToHexString(tagId.getId());
+            Log.d("NFCID","tag id is " + NFCId);
             buildTagViews(msgs);
         }
     }
@@ -213,12 +214,12 @@ public class FirmwareIITActivity extends AppCompatActivity {
         int intervalLog = text.charAt(18);
 
 
-        Log.d("NEG","interval of log is "+ intervalLog);
+        Log.d("Level1","interval of log is "+ intervalLog);
 
         numberofData = (text.length() - 20) / 3 - 1;
         StringBuilder sb = new StringBuilder();
 
-        String[] dateTime = dateTimeActivity.getDateTime(numberofData, intervalLog);
+        String[] dateTime = dateTimeActivity.getDateTime(numberofData, intervalLog*2);
 
         sb.append(header);
         for (int x = 19, y = 0; y < numberofData; x += 3, y++) {
@@ -226,28 +227,43 @@ public class FirmwareIITActivity extends AppCompatActivity {
             temperatureParsed[y] <<= 8;
             temperatureParsed[y] |= text.charAt(x);
 
+            Log.d("Level1", "hex code" + temperatureParsed[y]);
 
-            Log.d("temp", "hex code" + temperatureParsed[y]);
+            double analogVolt = 0;
+            int C=0;
+            double tempConv = 0;
 
-            //double analogVolt = (900.0*temperatureParsed[y]/128.0)/(16384/256.0);
-//            double analogVolt = (1800.0 * temperatureParsed[y] / 16384.0);
-            double analogVolt = (112.5 * temperatureParsed[y] / 16384.0);//2019/02/13 SDIGAIN_8 used
-            //************************************************************************
-            //************************Bijen's sensor code*****************************
-            //************************************************************************/
-            double tempConv = ((analogVolt / 270.0) * 100000);
-            //int C = (int) (100 * (46 + (-0.00541 * tempConv + 333.5361)));   // sensor 10
-           int C = (int) (100 *  (0.028116 * tempConv - 466.2849));   // sensor 9
-           // int C = (int) (100 * (32.5 + (-0.00912 * tempConv + 388.19)));   //sensor 8
+            Log.d("Level1",NFCId);
+            if(    NFCId.equals("0x560e010000a207e0")
+                || NFCId.equals("0x520e010000a207e0")
+                || NFCId.equals("0x36d3010000a207e0")
+                || NFCId.equals("0x580e010000a207e0")
+                || NFCId.equals("0x590e010000a207e0")
+            ) {
+                //*******************For Commercial thermistor **************************/
+                analogVolt = (900.0 * temperatureParsed[y] / 16384.0);              //gain 1
+                tempConv = ((analogVolt / 270.0) * 100000);
+                C = (int) (100 * ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15));
 
-            //************************************************************************/
-            //*******************For Commercial thermistor **************************/
-            //    double tempConv = ((analogVolt / 270.0) * 100000);
-            //    int  C = (int)(100* ((1.0 / ((((Math.log10(tempConv / 100000.0) / Math.log10(2.718))) / 4250.0) + (1.0 / 298.15))) - 273.15));
+            } else{
+                //*******************For Printed thermistor **************************/
+                analogVolt = (112.5 * temperatureParsed[y] / 16384.0);           //DIGAIN_8 used
+                tempConv = ((analogVolt / 270.0) * 100000);
 
-            Log.d("temp", "temperature Parsed " + analogVolt);
-            Log.d("temp", "tempConv " + tempConv);
-            Log.d("temp", "C " + C);
+                if( NFCId.equals("0x4d0e010000a207e0"))
+                    C = (int) (100 *  (0.028116 * tempConv - 462.2849));
+                else if (NFCId.equals("0x2cd3010000a207e0"))
+                    C = (int) (100 *  (0.039494 * tempConv - 651.5309));
+                else if ( NFCId.equals("0x2dd3010000a207e0"))
+                    C = (int) (100 *  (0.0362 * tempConv - 545));
+                else if ( NFCId.equals("0x570e010000a207e0"))
+                    C = (int) (100 *  (0.0503 * tempConv - 679));
+            }
+
+
+            Log.d("Level1", "Voltage Drop " + analogVolt);
+            Log.d("Level1", "Resistance " + tempConv);
+            Log.d("Level1", "Temp in C " + C);
 
             sb.append(' ');
             sb.append(", R: ,");
