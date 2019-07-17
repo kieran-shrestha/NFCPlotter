@@ -234,11 +234,11 @@ public class FirmwareIITActivity extends AppCompatActivity {
             double tempConv = 0;
 
             Log.d("Level1",NFCId);
-            if(    NFCId.equals("0x560e010000a207e0")
+            if(    NFCId.equals("0x560e010000a207e0")   //HAVE
                 || NFCId.equals("0x520e010000a207e0")
                 || NFCId.equals("0x36d3010000a207e0")
-                || NFCId.equals("0x580e010000a207e0")
-                || NFCId.equals("0x590e010000a207e0")
+                || NFCId.equals("0x580e010000a207e0")   //HAVE
+                || NFCId.equals("0x590e010000a207e0")   //have
             ) {
                 //*******************For Commercial thermistor **************************/
                 analogVolt = (900.0 * temperatureParsed[y] / 16384.0);              //gain 1
@@ -252,12 +252,13 @@ public class FirmwareIITActivity extends AppCompatActivity {
 
                 if( NFCId.equals("0x4d0e010000a207e0"))
                     C = (int) (100 *  (0.028116 * tempConv - 462.2849));
-                else if (NFCId.equals("0x2cd3010000a207e0"))
+                else if (NFCId.equals("0x2cd3010000a207e0"))    //HAVE
                     C = (int) (100 *  (0.039494 * tempConv - 651.5309));
-                else if ( NFCId.equals("0x2ed3010000a207e0"))
-                    C = (int) (100 *  (0.0362 * tempConv - 545-185));
-                else if ( NFCId.equals("0x570e010000a207e0"))
-                    C = (int) (100 *  (0.0503 * tempConv - 679));
+
+                else if ( NFCId.equals("0x2ed3010000a207e0"))       //have
+                    C = (int) (100 *  (0.0362 * tempConv - 545-189));
+                else if ( NFCId.equals("0x570e010000a207e0"))   //HAVE
+                    C = (int) (100 *  (0.0503 * tempConv - 679 - 54));
             }
 
 
