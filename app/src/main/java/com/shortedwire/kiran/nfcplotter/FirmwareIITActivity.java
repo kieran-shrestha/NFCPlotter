@@ -254,8 +254,8 @@ public class FirmwareIITActivity extends AppCompatActivity {
                     C = (int) (100 *  (0.028116 * tempConv - 462.2849));
                 else if (NFCId.equals("0x2cd3010000a207e0"))
                     C = (int) (100 *  (0.039494 * tempConv - 651.5309));
-                else if ( NFCId.equals("0x2dd3010000a207e0"))
-                    C = (int) (100 *  (0.0362 * tempConv - 545));
+                else if ( NFCId.equals("0x2ed3010000a207e0"))
+                    C = (int) (100 *  (0.0362 * tempConv - 545-185));
                 else if ( NFCId.equals("0x570e010000a207e0"))
                     C = (int) (100 *  (0.0503 * tempConv - 679));
             }
